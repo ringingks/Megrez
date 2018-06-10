@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- SDK: jQuery -->
+    <script th:src="@{/depot/SDK/jQuery/jquery.min.js}"></script>
+    <!-- SDK: leaflet -->
+    <!--<script th:src="@{~/../depot/SDK/leaflet/1.2.0/leaflet.js}"></script>-->
+    <!--<link rel="stylesheet" th:href="@{/depot/SDK/leaflet/1.2.0/leaflet.css}">-->
+    <!-- SDK: SuperMap -->
+    <script type="text/javascript" include="echarts" th:src="@{/depot/SDK/SuperMap/9D/include-leaflet.js}"></script>
+    <script type="text/javascript" th:src="@{/depot/SDK/SuperMap/9D/iclient9-leaflet.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/depot/SDK/SuperMap/9D/iclient9-leaflet.min.css}">
+    <!-- SDK: layui -->
+    <script th:src="@{/depot/SDK/layui/layui.js}"></script>
+    <link rel="stylesheet" th:href="@{/depot/SDK/layui/css/layui.source.css}" media="all">
+
+    <script th:src="@{/depot/SDK/echarts/v4.0.4/echarts.min.js}"></script>
+
+</head>
+
+<style>
+    html,
+    body {
+        margin: 0;
+        overflow: hidden;
+        width: 100%;
+        min-width: 1200px;
+        height: 100%;
+        #position: absolute;
+        top: 0;
+        background: #fff;
+    }
+
+</style>
+
+<body>
+<div class="app" style=" width: 100%;height:100%;position: absolute;">
+    <div id="map" style="width: 100%;height: 100%"></div>
+</div>
+</body>
+
+<script>
+    var myHome = {};
+    myHome.center = [30.628502, 104.051807];
+    myHome.lng = 104.051907;
+    myHome.lat = 30.628202;
+
+    var kindergartens = []
+    var rec1 = {};
+    rec1.code = "6007"
+    rec1.name = "成都高新区蓝迪双语幼儿园"
+    rec1.center = [30.621167,104.044979]
+    rec1.address = "高新区创业路9号（630厂宿舍内）"
+    rec1.tel = "85188791"
+    rec1.plan = 25
+    kindergartens.push(rec1)
+
+    var rec2 = {};
+    rec2.code = "6021"
+    rec2.name = "成都高新区绿舟紫薇幼儿园"
+    rec2.center = [30.609946,104.052765]
+    rec2.address = "紫薇东路69号附2号"
+    rec2.tel = "85188791"
+    rec2.plan = 75
+    kindergartens.push(rec2)
+
+    var rec3 = {};
+    rec3.code = "6030"
+    rec3.name = "成都高新区国华盛泰幼儿园"
+    rec3.center = [30.600756,104.055278]
+    rec3.address = " 高新区泰和二街178号"
+    rec3.tel = "87789082"
+    rec3.plan = 125
+    kindergartens.push(rec3)
+
+    var rec4 = {};
+    rec4.code = "6048"
+    rec4.name = "桐梓林1号幼儿园（暂定名）"
+    rec4.center = [30.604117,104.054455]
+    rec4.address = "高新区成汉北路69号"
+    rec4.tel = ""
+    rec4.plan = 50
+    rec4.remark = "预计2018年12月开园，资格确认地址：盛泰社区党群活动中心（成汉北路17号）"
+    kindergartens.push(rec4)
+
+
+</script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var hello = /*[[${hello}]]*/ 'Sebastian';
+    /*]]>*/
+</script>
+
+<script type="text/javascript">
+
+    var url = "http://t3.supermapcloud.com/MapService/getGdp";
+//    url = "http://support.supermap.com.cn:8090/iserver/services/map-china400/rest/maps/ChinaDark";
+//        var map = L.map('map', {
+//            center: [30.615949, 104.055484],
+//            crs: L.CRS.Baidu,
+//            zoom: 13
+//        });
+//        L.supermap.baiduTileLayer().addTo(map);
+
+    var coor_ = {};
+
+    var map = L.map('map', {
+        center: [30.615949, 104.055484],
+        crs: L.CRS.EPSG3857,
+        zoom: 14
+    });
+    L.supermap.cloudTileLayer().addTo(map);
+
+    L.marker(myHome.center,
+        {
+            icon: L.icon({
+                iconUrl: "[[@{/page/images/map/tim.wujiaoxing.fw.png}]]",
+                iconSize: [27, 27]
+            })
+        }).addTo(map);
+
+    var datas = [];
+    for (var i=0; i<kindergartens.length; i++) {
+        var kg = kindergartens[i];
+        console.log(kg)
+        if (kg) {
+            var lng = kg.center[1];
+            var lat = kg.center[0];
+
+            var ite = {};
+            ite.code = kg.code;
+            ite.name = kg.name;
+            ite.value = kg.plan;
+
+            ite.sourcedata = kg;
+            datas.push(ite);
+
+            console.log("coor_.y" + kg.code + " = [" + lng + "," + lat + "]");
+            eval("coor_.y" + kg.code + " = [" + lng + "," + lat + "]");
+        }
+    }
+
+    var convertData = function (data) {
+        var res = [];
+        for (var i = 0; i < data.length; i++) {
+            var item = data[i];
+            var tag = "y"+item.code
+            var geoCoord = coor_[tag];
+            if (geoCoord) {
+                res.push({
+                    name: item.name,
+                    value: geoCoord.concat(item.value),
+                    sourcedata: item.sourcedata
+                });
+            }
+        }
+        console.log(10, res)
+        return res;
+    };
+
+    option = {
+        title: {
+            text: '',
+            subtext: '',
+            sublink: '#',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            orient: 'vertical',
+            y: 'bottom',
+            x: 'right',
+            data: ['kindergarten'],
+            textStyle: {
+                color: '#fff'
+            }
+        },
+        series: [{
+            name: 'kindergartens',
+            type: 'scatter',
+            coordinateSystem: 'leaflet',
+            data: convertData(datas),
+            sourcedata: datas,
+            symbolSize: function (val) {
+                return val[2]<50?10:val[2]/5+5;
+            },
+            showEffectOn: 'render',
+            rippleEffect: {
+                brushType: 'stroke'
+            },
+            hoverAnimation: true,
+            label: {
+                normal: {
+                    formatter: '{b}',
+                    position: 'right',
+                    show: true
+                },
+                emphasis: {
+                    show: true
+                }
+            },
+            itemStyle: {
+                normal: {
+                    color: '#f00'
+                    ,opacity: 1
+                    ,shadowBlur: 2
+                    ,borderColor:'purple'
+//                    ,shadowColor: 'purple'
+                }
+            }
+        }]
+    };
+
+    var echartslayer = L.supermap.echartsLayer(option).addTo(map);
+
+</script>
+
+<script type="text/javascript">
+
+</script>
+</html>

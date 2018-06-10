@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>USER INFO</title>
+    <script src="../../depot/SDK/layui/layui.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../../depot/SDK/layui/css/layui.source.css" media="all">
+    <script src="../../depot/SDK/jQuery/jquery.min.js" charset="utf-8"></script>
+    <script src="../../config/config.js" charset="utf-8"></script>
+    <style>
+        .panel-add-record{
+            padding-top: 20px;
+            padding-left: 10px;
+            width: 480px
+        }
+        .panel-add-record .row {
+            height: 30px;
+            margin-top: 10px;
+        }
+        .panel-add-record .row .input-lable{
+            min-width: 110px;
+            height: 100%;
+            display: block;
+            float: left ;
+            margin: 0;
+            font-size: 1em;
+            font-weight: bold;
+            font-family: "Courier New";
+            text-align: left !important;
+            padding: 0 !important;
+        }
+        .lable-this-form {
+            text-align: left !important;
+            padding: 0 !important;
+            font-size: 1em;
+            font-weight: bold;
+            font-family: "Courier New";
+        }
+        .panel-add-record .row .input-content{
+            margin-left: 3px;
+            min-width: 300px;
+            padding: 0;
+            height: 100%;
+        }
+        .btn-group-style{
+            text-align: right;
+        }
+        .btn-group-position{
+            display: inline-block;
+            margin-right: 5px;
+        }
+        body .demo-class .layui-layer-content {
+            overflow: visible;
+        }
+        .input-select-style { width:305px; padding-left: 3px; }
+        /*.layui-select-title { border-color: #000 }*/
+    </style>
+</head>
+<body>
+
+<ins class="adsbygoogle" style="display:inline-block;width:970px;height:90px" data-ad-client="ca-pub-6111334333458862" data-ad-slot="3820120620"></ins>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+    <legend>LOGIN USER SETTING</legend>
+</fieldset>
+
+<div class="btn-group-style">
+<div class="layui-btn-group btn-group-position">
+    <button class="layui-btn layui-btn-sm" onclick="addRow()"><i class="layui-icon"></i></button>
+    <button class="layui-btn layui-btn-sm" onclick="del()"><i class="layui-icon"></i></button>
+</div>
+</div>
+
+<table id="data_model_table" class="layui-table" lay-data="{height: 'full-150',page:true, url:_host+'sys/user'}" lay-filter="demoEvent">
+    <thead>
+    <tr>
+        <!--<th lay-data="{field:'No', width:50, sort: true, fixed: true,templet: '#titleTpl'}">No</th>-->
+        <th lay-data="{field:'', width:30, type:'checkbox'}"></th>
+        <th lay-data="{field:'rn', width:60, sort: true}">No.</th>
+        <th lay-data="{field:'username', width:230, sort: true}">USERNAME</th>
+        <th lay-data="{field:'userpwd', width:230, event: 'set-reporturl', style:'cursor: pointer;'}">PASSWORD</th>
+        <th lay-data="{field:'orgname', width:'150', event: 'set-urlparam', style:'text-align: center; cursor: pointer;'}">ORG NAME</th>
+        <th lay-data="{field:'status', width:'100', event: 'set-ticketuser', style:'text-align: center;'}">STATUS</th>
+    </tr>
+    </thead>
+</table>
+
+</body>
+
+<script type="text/javascript">
+
+//    layer.config({
+//        skin: 'body panel-add-record layui-layer-content'
+//    })
+
+    var table_field_setting = ['username','userpwd','orgname','status'];
+
+    layui.use('table', function(){
+        var table = layui.table;
+
+        //监听单元格事件
+        table.on('tool(demoEvent)', function(obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            var cells = obj.tr[0].cells;
+            var cell, len;
+            var select_obj_;
+            var select_field_;
+            for(len = cells.length; len;) {
+                cell = cells[--len];
+                var field = cell.getAttribute("data-field");
+
+                if(layEvent === ("set-" + field)) {
+                    var val_;
+                    select_field_ = field;
+                    select_obj_ = data;
+                    eval("val_ = data." + field); // 动态定义点击的内容
+                    layer.prompt({
+                        formType: 2,
+                        title: '参数 [' + select_field_ + '] ',
+                        value: val_
+                    }, function(value, index) {
+                        layer.close(index);
+                        var pre_value;
+                        eval("pre_value = select_obj_." + select_field_ );
+                        eval("select_obj_." + select_field_ + " = value"); // 更新对象内的值集
+                        if(value == pre_value){
+                            return;
+                        }
+                        update(select_obj_,obj,select_field_,value);
+                    });
+                } // if
+            } // for
+        });
+
+
+        table.on('checkbox(demoEvent)', function(obj){
+//            console.log(obj.data)
+        });
+    });
+
+    function update(select_obj_, obj, field, value) {
+        var url = _host + "rpt/setting/accessing?method=post";
+//        delete select_obj_.lastupdatetime;
+        var post_data_ = {data: JSON.stringify(select_obj_)};
+        var updatetime_ = (new Date()).toLocaleDateString();
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: post_data_,
+            contentType: 'application/x-www-form-urlencoded ',
+            dataType: 'json',
+            success: function (data) {
+                if (data) {
+                    var state = data.state;
+                    if (state) {
+                        if (state === "1") {
+                            eval("obj.update({" + field + ": value})"); //同步更新表格和缓存对应的值
+                            obj.update({lastupdatetime: updatetime_});
+                            layui.layer.msg(
+                                'Updating Accepted！'
+                                ,{title: 'SYSTEM INFO',time: 5000}
+                            );
+
+                        } else {
+                            layui.layer.open({title: 'EEEOR INFO', content: 'Update Failed！<br/>' + data.infos});
+                        }
+                    }
+                } else {
+                    layui.layer.open({
+                        title: 'EEEOR INFO',
+                        content: 'Update Failed！<br/>ERROR:an exception occurs when executing task!Please contact with your system administrator!'
+                    });
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.responseJSON.error)
+                layui.layer.open({
+                    title: 'EEEOR INFO',
+                    content: 'Update Failed！<br/>ERROR: '+XMLHttpRequest.responseJSON.error+'('+XMLHttpRequest.responseJSON.status+')'
+                });
+            }
+        })
+    }
+
+    function saveNew(record) {
+        var url = _host+'rpt/setting/accessing?method=put';
+        var put_data_ =  {data: JSON.stringify(record)};
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: put_data_,
+            contentType: 'application/x-www-form-urlencoded ',
+            dataType: 'json',
+            async: false,
+            success: function(data) {
+                var table = layui.table;
+                if (data) {
+                    var state = data.state;
+                    if (state && state === "1") {
+                        layui.layer.open({
+                            content: 'Updating Accepted！'
+                            , title: 'SYSTEM INFO'
+                            , yes: function () {
+                                setTimeout('layer.closeAll()',1000);
+                                table.reload('data_model_table')
+                            }
+                        });
+
+                    } else {
+                        layui.layer.open({title: 'EEEOR INFO', content: 'Update Failed！<br/>' + data.infos});
+                    }
+                } else {
+                    layui.layer.open({
+                        title: 'EEEOR INFO',
+                        content: 'Update Failed！<br/>ERROR:an exception occurs when executing task!Please contact with your system administrator!'
+                    });
+                }
+
+            },
+            error: function(data) {
+                layui.layer.open({title: 'EEEOR INFO',content: 'Update Failed！<br/>ERROR:an exception occurs when executing task!Please contact with your system administrator!'});
+            }
+        })
+    }
+    
+    function addRow() {
+
+    var combobox_radio_ = '<div class="layui-form">'
+            + '<div class="layui-form-item">'
+            + '<label class="layui-form-label lable-this-form">'+table_field_setting[2].toUpperCase()+'</label>'
+            + '<div class="layui-input-block input-select-style">'
+            + '<select id="rec3" name="interest" lay-filter="aihao" lay-verify="" lay-search>'
+            + '<option value="0">写作</option>'
+            + '<option value="1">阅读1</option>'
+        + '<option value="2">阅读2</option>'
+        + '<option value="3">阅读3</option>'
+        + '<option value="4">阅读4</option>'
+        + '<option value="5">阅读5</option>'
+        + '<option value="6">阅读6</option>'
+            + '</select>'
+            + '</div>'
+            + '</div>'
+            + '</div>' ;
+
+        layer.open({
+            id:1,
+            type: 1,
+            title:'<b>Add New Record</b>',
+            skin:'demo-class',
+            area:['500px', '300px'],
+
+            content: ' <div class="panel-add-record">'
+            +'<div class="row"><span class="input-lable">'+table_field_setting[0].toUpperCase()+'</span><input id="rec1" class="input-content" type="text"></div>'
+            +'<div class="row"><span class="input-lable">'+table_field_setting[1].toUpperCase()+'</span><input id="rec2" class="input-content" type="text"></div>'
+//            +'<div class="row"><span class="input-lable">'+table_field_setting[2].toUpperCase()+'</span><input id="rec3" class="input-content" type="text"></div>'
+            +'<div class="row">' + combobox_radio_ + '</div>'
+            +'<div class="row"><span class="input-lable">'+table_field_setting[3].toUpperCase()+'</span><input id="rec4" class="input-content" type="text"></div>'
+            +'</div>'
+
+            ,btn:['&nbsp;&nbsp; SAVE &nbsp;&nbsp;','CANCEL'],
+            btn1: function (index,layero) {
+                var rec = {};
+                rec.reportname = $(".row #rec1").val()
+                rec.reporturl = $(".row #rec2").val()
+                rec.urlparam = $(".row #rec3").val()
+                rec.ticketuser = $(".row #rec4").val()
+
+                saveNew(rec)
+            },
+            btn2:function (index,layero) {
+                layer.close(index);
+            }
+
+        });
+
+        $('#rec1').focus()
+
+        layui.use('form', function(){
+            var form = layui.form;
+            form.render('select');
+        });
+
+    }
+    
+    function del() {
+        var table = layui.table;
+        var checkStatus = table.checkStatus('data_model_table'); //test即为基础参数id对应的值
+        var checkDatas = checkStatus.data;
+        var checkDatas_ID = []
+
+        var url = _host+'rpt/setting/accessing?method=delete';
+
+        for(var i=0; i<checkDatas.length; i++){
+            var item = checkDatas[i];
+            checkDatas_ID.push(item.repid)
+        }
+
+        var put_data_ =  {data: JSON.stringify(checkDatas_ID)};
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: put_data_,
+            contentType: 'application/x-www-form-urlencoded ',
+            dataType: 'json',
+            async: false,
+            success: function(data) {
+                if (data) {
+                    var state = data.state;
+                    if (state && state === "1") {
+                        layui.layer.open({
+                            content: 'Updating Accepted！'
+                            , title: 'SYSTEM INFO'
+                            , yes: function () {
+                                setTimeout('layer.closeAll()',1000);
+                                table.reload('data_model_table')
+                            }
+                        });
+
+                    } else {
+                        layui.layer.open({title: 'EEEOR INFO', content: 'Update Failed！<br/>' + data.infos});
+                        table.reload('data_model_table')
+                    }
+
+                } else {
+                    layui.layer.open({
+                        title: 'EEEOR INFO',
+                        content: 'Update Failed！<br/>ERROR:an exception occurs when executing task!Please contact with your system administrator!'
+                    });
+                }
+
+            },
+            error: function(data) {
+                layui.layer.open({title: 'EEEOR INFO',content: 'Update Failed！<br/>ERROR:an exception occurs when executing task!Please contact with your system administrator!'});
+            }
+        })
+
+    }
+
+
+</script>
+
+<!--<script type="text/html" id="titleTpl">-->
+    <!--{{d.LAY_TABLE_INDEX+1}}-->
+<!--</script>-->
+
+</html>

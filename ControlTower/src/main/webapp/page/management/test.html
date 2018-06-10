@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../../depot/SDK/layui/layui.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../../depot/SDK/layui/css/layui.source.css" media="all">
+    <script src="../../depot/SDK/jQuery/jquery.min.js" charset="utf-8"></script>
+</head>
+<body>
+<div class="layui-form"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label">下拉选择框</label>
+        <div class="layui-input-block">
+            <select id="rec1" name="interest" lay-filter="aihao">
+                <option value="0">写作</option>
+                <option value="1">阅读</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript">
+
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //各种基于事件的操作，下面会有进一步介绍
+    });
+    </script>
+</html>

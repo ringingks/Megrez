@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+    <script src="../../depot/SDK/layui/v2.3.0/layui.js"></script>
+    <link rel="stylesheet" href="../../depot/SDK/layui/v2.3.0/css/layui.css" media="all">
+    <script src="../../depot/SDK/jQuery/jquery.min.js" charset="utf-8"></script>
+    <script type="text/javascript">
+
+        var isDashboradLoadFinish = false;
+
+        function loadProgress(val) {
+            layui.use('element', function () {
+                var element = layui.element;
+                val = val + '%'
+                element.progress('demo1', val)
+            });
+        }
+
+        function initViz() {
+            var containerDiv = document.getElementById("vizContainer"),
+                //url = "http://public.tableau.com/views/RegionalSampleWorkbook/Storms",
+                url = "http://ytower.y3technologies.com/views/DELLHKMC/DELLHKMC?:embed=yes&:toolbar=top&:refresh=no&:alerts=no",
+                options = {
+                    hideTabs: false,
+                    onFirstInteractive: function () {
+                        console.log("Run this code when the viz has finished loading.");
+                        layui.element.progress('demo1', '100%')
+                        isDashboradLoadFinish = true;
+                        setTimeout('$(".layui-progress").fadeOut()', 2000)
+                    }
+                };
+
+            setTimeout('', 1000)
+            layui.element.progress('demo1', '5%')
+
+            var viz = new tableau.Viz(containerDiv, url, options);
+            // Create a viz object and embed it in the container div.
+
+
+        }
+    </script>
+    <style>
+        .head-nav {
+
+        }
+
+        .header-back {
+            background: #672b8c url(../images/logo/Y3-logo.png) no-repeat 20px !important;
+            background-size: 177px 60px !important;;
+        }
+    </style>
+</head>
+<script>
+    layui.use('element', function () {
+        var element = layui.element;
+    });
+    if(!isDashboradLoadFinish) {
+        setTimeout('loadProgress(50)', 3000)
+    }
+</script>
+<body onload="initViz();">
+<header class="layui-header header-back">
+
+</header>
+<div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="demo1">
+    <div class="layui-progress-bar" lay-percent="5%"><span class="layui-progress-text">5%</span></div>
+</div>
+
+<div id="vizContainer" style="width:100%; height:100%"></div>
+<div class="loading-end"></div>
+</body>
+</html>

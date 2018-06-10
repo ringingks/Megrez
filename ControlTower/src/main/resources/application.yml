@@ -1,0 +1,57 @@
+# war 包方式时，此配置将无效，以web容器的端口为准
+server:
+  port: 8888
+
+eureka:
+  client:
+    # 注册服务器的地址：服务提供者和服务消费者都要依赖这个地址
+    serviceUrl:
+#      defaultZone: http://10.202.16.211:9999/eureka/
+      defaultZone: http://127.0.0.1:9001/eureka/
+
+spring:
+  application:
+    name: control-tower
+#  mvc:
+#    view:
+#      # 配置视图文件所在位置；
+#      prefix: /html/
+#      # 配置视图文件后缀名；
+#      suffix: .html
+  thymeleaf:
+#    prefix: classpath:/templates/
+    prefix: /page/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    servlet.content-type: text/html
+    # 关闭缓存，即时刷新，上线生产环境需改成true
+    cache: false
+
+endpoints:
+  cors:
+    #allow-credentials:
+    #allowed-headers:
+    allowed-methods: POST,GET,DELETE,PUT
+    #allowed-origins: *
+    #exposed-headers: *
+    max-age: 1800
+
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 5000
+
+ribbon:
+  OkRetryOnConnectionErrors: true
+  # 对所有请求都进行重试
+  OkToRetryOnAllOperations: false
+  # 切换实例的重试次数
+  MaxAutoRetriesNextServer: 3
+  # 对当前实例的重试次数
+  MaxAutoRetries: 3
+  # 请求处理的超时时间
+  ReadTimeout: 30000
+
+# 日志输出控制
+logging:
+  level:
+    com.Y3.AnalyticsTeam: DEBUG
+    org.springframework.security: DEBUG

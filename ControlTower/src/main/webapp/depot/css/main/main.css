@@ -1,0 +1,41 @@
+html, body, .wrapper {
+    height: 100% !important;
+}
+.wrapper {
+    min-height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-header {
+    #position: fixed;
+    width: 100%;
+    height: 60px;
+}
+
+.nav-header {
+    height: 100%;
+}
+.navbar {
+    background-color: #3c8dbc;
+    ont-size: 16px;
+    height: 100%;
+}
+.navbar-header {
+    margin: 0 16px;
+    height: 100%;
+}
+.navbar.default .navbar-title {
+    height: 100%;
+    width: 460px;
+}
+.navbar .project-title {
+    text-decoration: none;
+    vertical-align: middle;
+    font-size: 24px;
+    color: #FFFFFF;
+}
+.navbar .project-logo{
+    width: 30px;
+    height: 30px;
+}

@@ -1,0 +1,75 @@
+#citylist-container {
+	padding: 6px 15px 15px;
+    width: 420px;
+    height: 260px;
+    line-height: 26px;
+    background: rgb(255, 255, 255);
+    position: absolute;
+    z-index: 9999;
+    display: block;
+    box-shadow: 0 2px 6px 0 rgba(0,0,0,.2), 0 2px 6px 0 rgba(0,0,0,.19);
+}
+
+.cl-head-text {
+    border: none;
+    text-indent: 10px;
+    color: #000;
+}
+
+.caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 4px solid;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+
+#cl-title {
+	font-family: Arial,sans-serif;
+	font-size: 14px;
+	font-weight: 700;
+    position: relative;
+    line-height: 36px;
+    border-bottom: 1px solid #cbcccd;
+}
+#cl-title dd {
+    white-space: normal;
+    line-height: 20px;
+    margin-bottom: 8px;
+}
+#cl-title dd li {
+    display: inline-block;
+    margin-right: 9px;
+    cursor: pointer;
+}
+#cl-title dd li a:hover {
+    color: #0f89f5;
+}
+
+#cl-details {
+	font-family: Arial,sans-serif;
+	font-size: 14px;
+    position: relative;
+    line-height: 36px;
+}
+#cl-details dd {
+    white-space: normal;
+    line-height: 25px;
+    margin-bottom: 10px;
+    display: block;
+    -webkit-margin-start: 40px;
+}
+#cl-details dd li {
+    display: inline-block;
+    margin-right: 15px;
+    cursor: pointer;
+    /*display: list-item;*/
+    text-align: -webkit-match-parent;
+}
+#cl-details dd li:hover {
+    color: #0f89f5;
+}
+    

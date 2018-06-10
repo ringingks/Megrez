@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- SDK: jQuery -->
+    <script src="/Megrez/depot/SDK/jQuery/jquery.min.js"></script>
+    <!-- SDK: layui -->
+    <script src="/Megrez/depot/SDK/layui/layui.js"></script>
+    <link rel="stylesheet" href="/Megrez/depot/SDK/layui/css/layui.source.css" media="all">
+    <!--<script th:src="@{/depot/SDK/echarts/v4.0.4/echarts.min.js}"></script>-->
+    <!-- SDK: tableau -->
+    <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+</head>
+
+<script type="text/javascript">
+
+    var isDashboradLoadFinish = false;
+
+    function loadProgress(val) {
+        layui.use('element', function () {
+            var element = layui.element;
+            val = val + '%'
+            element.progress('demo1', val)
+        });
+    }
+
+    /***
+     *
+     */
+    function loadReportConfig(){
+        var rptPath = '[[${rptPath}]]'
+    }
+
+    function initViz() {
+        var placeholderDiv = document.getElementById("vizContainer");
+        var url = "http://ytower.y3technologies.com/views/DELLHKMC/DELLHKMC?:embed=yes&:toolbar=top&:refresh=no&:alerts=false";
+        url = 'https://[[${rptPath}]]';
+        var options = {
+            hideTabs: false
+            , onFirstInteractive: function () {
+                // The viz is now ready and can be safely used.
+                layui.element.progress('demo1', '100%')
+                isDashboradLoadFinish = true;
+                setTimeout('$(".layui-progress").fadeOut()', 1500)
+            }
+        };
+        setTimeout('', 1000)
+        layui.element.progress('demo1', '5%')
+        var viz = new tableau.Viz(placeholderDiv, url, options);
+    }
+
+</script>
+
+<style>
+    .header-back{
+        background: #672b8c url(/Megrez/page/images/logo/Y3-logo.png) no-repeat 20px ;
+        background-size: 177px 60px;
+        height: 65px;
+    }
+    .nav-style{
+        background: transparent;
+        float: right;
+    }
+    .style-dashboard{
+        width: 100%;
+    }
+    .style-progress{
+        position: absolute;
+        z-index: 9999;
+        top: 65px;
+        left: 0;
+        width: 100%;
+    }
+    .title-style{
+        text-align: center;
+        position: absolute;
+        z-index: 1000;
+        width:100%;
+        margin-top: 10px;
+        font-size: 1.5em;
+        font-weight: bolder;
+        color: #FF0;
+    }
+</style>
+
+<body class="layui-layout-body" onload="initViz();">
+<header class="header-back layui-header">
+    <span class="title-style">[[${rptName}]]</span>
+    <ul class="nav-style layui-nav">
+        <li class="layui-nav-item"><a href="">设置</a></li>
+        <li class="layui-nav-item"><a href="">关于</a></li>
+    </ul>
+</header>
+<div class="style-progress">
+<div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="demo1">
+    <div class="layui-progress-bar" lay-percent="5%"><span class="layui-progress-text">5%</span></div>
+</div>
+</div>
+<div class="style-dashboard" >
+    <div id="vizContainer" style="width:100%; height:100%;"></div>
+</div>
+</body>
+<script>
+    layui.use('element', function(){
+        var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+    });
+
+    if(!isDashboradLoadFinish) {
+        setTimeout('loadProgress(50)', 3000)
+    }
+
+</script>
+</html>

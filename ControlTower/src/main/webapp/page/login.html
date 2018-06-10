@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Y3 - Contrl Tower | Sign in</title>
+    <!-- SDK: jQuery -->
+    <script src="../depot/SDK/jQuery/jquery.min.js"></script>
+    <!-- SDK: layui -->
+    <script src="../depot/SDK/layui/v2.3.0/layui.js"></script>
+    <link rel="stylesheet" href="../depot/SDK/layui/v2.3.0/css/layui.css" media="all">
+
+    <script src="../config/config.js" charset="utf-8"></script>
+    <style>
+        .login-main{
+            margin: auto;
+            text-align: center;
+        }
+        .head-position{
+            margin-top: 20%;
+        }
+        input{
+            width: 300px !important;
+        }
+        .layui-form div{
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="login-main">
+    <header class="layui-elip head-position">USER LOGIN</header>
+    <form class="layui-form" method="post" action="sys/user/login">
+        <div class="layui-input-inline">
+            <input type="text" name="account" required  lay-verify="required" placeholder="username" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-input-inline">
+            <input type="password" name="password" required  lay-verify="required" placeholder="your password" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-input-inline login-btn">
+            <button lay-submit class="layui-btn" lay-filter="login">LOGIN</button>
+        </div>
+        <hr/>
+        <!--<p><a href="javascript:;" class="fl">立即注册</a><a href="javascript:;" class="fr">忘记密码？</a></p>-->
+    </form>
+</div>
+<script type="text/javascript">
+
+    function httpPost(URL, PARAMS) {
+        var temp = document.createElement("form");
+        temp.action = URL;
+        temp.method = "post";
+        temp.style.display = "none";
+
+        for (var x in PARAMS) {
+            var opt = document.createElement("textarea");
+            opt.name = x;
+            opt.value = PARAMS[x];
+            temp.appendChild(opt);
+        }
+
+        document.body.appendChild(temp);
+        temp.submit();
+
+        return temp;
+    }
+
+    var form_action_path = $('.layui-form').attr('action');
+    var form_method = $('.layui-form').attr('method');
+    layui.use('form', function () {
+        var form = layui.form;
+        form.on('submit(login)', function(fromdata){
+
+            $.ajax({
+                url:_host + form_action_path,
+                type: form_method,
+                contentType: 'application/x-www-form-urlencoded ',
+                dataType: 'json',
+//                async: false,
+                data:fromdata.field,
+                success:function(response){
+                    console.log(response)
+                    if(response.state=="1"){
+//                        location.href = _host + "rpt/show/auth"
+//                        $.post( _host + "rpt/show/auth", { user: 26 })
+                        httpPost(_host + "rpt/show/12", { user: 26 })
+                    }
+                }
+            })
+
+            return false;
+        });
+    });
+
+
+</script>
+</body>
+</html>
