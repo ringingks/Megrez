@@ -1,0 +1,30 @@
+# 注册服务的端口号
+server:
+  port: 8911
+
+spring:
+  application:
+    # 服务名称
+    name: provider-common-service
+  cloud:
+    config:
+      discovery:
+        enabled: true
+
+eureka:
+  client:
+    # 注册服务器的地址：服务提供者和服务消费者都要依赖这个地址
+    serviceUrl:
+#      defaultZone: http://10.202.34.144:9002/eureka/
+      defaultZone: http://127.0.0.1:9001/eureka/
+
+
+# 日志输出控制
+logging:
+  level:
+    root: INFO
+    org.springframework.security: DEBUG
+    com.Y3.AnalyticsTeam.CT: DEBUG
+
+com.Y3.ControlTower.tableau.host: https://ytower.y3technologies.com
+com.Y3.ControlTower.tableau.auth: test
