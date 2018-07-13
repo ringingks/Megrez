@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>CHANGE YOUR PASSWORD</title>
-    <script src="../../depot/SDK/layui/layui.js"></script>
+    <script src="../../depot/SDK/layui/v2.2.5/layui.js"></script>
     <link rel="stylesheet" href="../../depot/SDK/layui/css/layui.source.css" media="all">
     <style>
         .form-label{

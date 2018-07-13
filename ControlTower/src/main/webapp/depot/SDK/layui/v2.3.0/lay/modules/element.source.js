@@ -90,7 +90,7 @@ layui.define('jquery', function(exports){
 
     var NAV_ELEM = '.layui-nav', NAV_ITEM = 'layui-nav-item', NAV_BAR = 'layui-nav-bar'
         ,NAV_TREE = 'layui-nav-tree', NAV_CHILD = 'layui-nav-child', NAV_MORE = 'layui-nav-more'
-        ,NAV_ANIM = 'layui-anim layui-anim-upbit', NAV_HIGHLIGHT_TOP='nav-highlight-top'
+        ,NAV_ANIM = 'layui-anim layui-anim-upbit'
 
         //基础事件体
         ,call = {
@@ -303,24 +303,15 @@ layui.define('jquery', function(exports){
                     if(nav.hasClass(NAV_TREE)){
                         bar.css({
                             top: othis.position().top
-                            // top: 0
                             ,height: othis.children('a').outerHeight()
                             ,opacity: 1
                         });
                     } else {
                         child.addClass(NAV_ANIM);
-                        if (nav.hasClass(NAV_HIGHLIGHT_TOP)){
-                            bar.css({
-                                left: othis.position().left + parseFloat(othis.css('marginLeft'))
-                                ,top: 0
-                            });
-                        }else{
-                            bar.css({
-                                left: othis.position().left + parseFloat(othis.css('marginLeft'))
-                                ,top: othis.position().top + othis.height() - bar.height()
-                            });
-                        }
-
+                        bar.css({
+                            left: othis.position().left + parseFloat(othis.css('marginLeft'))
+                            ,top: othis.position().top + othis.height() - bar.height()
+                        });
 
                         timer[index] = setTimeout(function(){
                             bar.css({

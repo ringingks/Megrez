@@ -22,7 +22,7 @@ public class CorsFilter implements Filter {
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
         if (req instanceof HttpServletRequest) {
-            LOGGER.info("### "+((HttpServletRequest)req).getRequestURL()+" ,method->"+((HttpServletRequest) req).getMethod() );
+            LOGGER.info("### CorsFilter "+((HttpServletRequest)req).getRequestURL()+" ,method->"+((HttpServletRequest) req).getMethod() );
             Map<String, String[]> map = ((HttpServletRequest)req).getParameterMap();
             if(!map.isEmpty()) {
                 LOGGER.debug("### Parameter -> ");

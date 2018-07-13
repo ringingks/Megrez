@@ -6,8 +6,8 @@
     <!-- SDK: jQuery -->
     <script src="/Megrez/depot/SDK/jQuery/jquery.min.js"></script>
     <!-- SDK: layui -->
-    <script src="/Megrez/depot/SDK/layui/layui.js"></script>
-    <link rel="stylesheet" href="/Megrez/depot/SDK/layui/css/layui.source.css" media="all">
+    <script src="/Megrez/depot/SDK/layui/v2.3.0/layui.js"></script>
+    <link rel="stylesheet" href="/Megrez/depot/SDK/layui/v2.3.0/css/layui.source.css" media="all">
     <!--<script th:src="@{/depot/SDK/echarts/v4.0.4/echarts.min.js}"></script>-->
     <!-- SDK: tableau -->
     <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
@@ -16,6 +16,7 @@
 <script type="text/javascript">
 
     var isDashboradLoadFinish = false;
+    var win_height_ = window.screen.availHeight;
 
     function loadProgress(val) {
         layui.use('element', function () {
@@ -37,8 +38,10 @@
         var url = "http://ytower.y3technologies.com/views/DELLHKMC/DELLHKMC?:embed=yes&:toolbar=top&:refresh=no&:alerts=false";
         url = 'https://[[${rptPath}]]';
         var options = {
-            hideTabs: false
-            , onFirstInteractive: function () {
+            width: '100%'
+            ,height: (win_height_-65*2) +'px'
+            ,hideTabs: false
+            ,onFirstInteractive: function () {
                 // The viz is now ready and can be safely used.
                 layui.element.progress('demo1', '100%')
                 isDashboradLoadFinish = true;
@@ -54,7 +57,7 @@
 
 <style>
     .header-back{
-        background: #672b8c url(/Megrez/page/images/logo/Y3-logo.png) no-repeat 20px ;
+        background: #672b8c url(/Megrez/images/logo/Y3-logo.png) no-repeat 20px ;
         background-size: 177px 60px;
         height: 65px;
     }
@@ -77,19 +80,19 @@
         position: absolute;
         z-index: 1000;
         width:100%;
-        margin-top: 10px;
+        margin-top: 15px;
         font-size: 1.5em;
         font-weight: bolder;
-        color: #FF0;
+        color: #00bfb3;
     }
 </style>
 
 <body class="layui-layout-body" onload="initViz();">
 <header class="header-back layui-header">
     <span class="title-style">[[${rptName}]]</span>
-    <ul class="nav-style layui-nav">
-        <li class="layui-nav-item"><a href="">设置</a></li>
-        <li class="layui-nav-item"><a href="">关于</a></li>
+    <ul id="header-ul" class="nav-style layui-nav">
+        <li class="layui-nav-item"><a target="_blank" th:href="@{'/page/sys/?login='+${login_user}}">Setting</a></li>
+        <li class="layui-nav-item"><a href="#">About</a></li>
     </ul>
 </header>
 <div class="style-progress">

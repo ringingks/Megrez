@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>table 动态添加行</title>
+    <link rel="stylesheet" href="../../../depot/SDK/layui/v2.3.0/css/layui.css" media="all">
+  <style type="text/css">
+#test-n1 .layui-laydate{
+  box-shadow: 0 0 15px #333;
+}
+#test-n1 .layui-laydate-main{
+  width:372px;
+}
+#test-n1 .layui-laydate-content td,#test-n1 .layui-laydate-content th{width:50px;}
+#test-n1 .layui-laydate-header{
+  background-color: #009688;
+  color: #fff;  
+}
+#test-n1 .layui-laydate-header i{
+  color: #fff;
+}
+.editrow{
+  display: none;
+}
+.editrow .layui-table-edit1 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0 15px 1px;
+    border: none;
+}
+.editrow .layui-table-cell{display: none;}
+.editrow .layui-table-btn{display: block;}
+
+  </style>
+</head>
+<body>
+<button type="button" id="addbtn" class="layui-btn layui-btn-small">添加行</button>
+<table id="demo" lay-filter="testtable"></table>
+
+<div class="site-demo-laydate">
+  <div class="layui-inline" id="test-n1"></div>
+  <div class="layui-inline" id="test-n2"></div>
+  <div class="layui-inline" id="test-n3"></div>
+  <div class="layui-inline" id="test-n4"></div>
+</div>
+
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-mini" lay-event="detail">查看</a>
+  <a class="layui-btn layui-btn-mini" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="del">删除</a>
+</script>
+<script src="../../../depot/SDK/layui/v2.3.0/layui.js" charset="utf-8"></script>
+<script type="text/javascript">
+var $,table,laydate;
+layui.use(["table","laydate","layer"],function() {
+	table=layui.table,laydate=layui.laydate,$=layui.jquery;
+  var layer=layui.layer;
+  //展示已知数据
+  table.render({
+    elem: '#demo'
+    ,data: [{
+      "id": "10001"
+      ,"username": "杜甫"
+      ,"email": "xianxin@layui.com"
+      ,"sex": "男"
+      ,"city": "浙江杭州"
+      ,"sign": "人生恰似一场修行"
+      ,"experience": "116"
+      ,"ip": "192.168.0.8"
+      ,"logins": "108"
+      ,"joinTime": "1507353913000"
+    }, {
+      "id": "10002"
+      ,"username": "李白"
+      ,"email": "xianxin@layui.com"
+      ,"sex": "男"
+      ,"city": "浙江杭州"
+      ,"sign": "人生恰似一场修行"
+      ,"experience": "12"
+      ,"ip": "192.168.0.8"
+      ,"logins": "106"
+      ,"joinTime": "2016-10-14"
+      ,"LAY_CHECKED": true
+    }]
+    ,height: 272
+    ,cols: [[ //标题栏
+      {checkbox: true} //默认全选
+      ,{field: 'id', title: 'ID', width: 80, sort: true}
+      ,{field: 'username', title: '用户名', width: 120}
+      ,{field: 'email', title: '邮箱', width: 150}
+      ,{field: 'sign', title: '签名', width: 150}
+      ,{field: 'sex', title: '性别', width: 80}
+      ,{field: 'city', title: '城市', width: 100}
+      ,{field: 'joinTime', title: '添加时间', width: 120,templet:'<div>{{ Format(d.joinTime,"yyyy-MM-dd")}}</div>'}
+      ,{field: 'experience', title: '积分', width: 80, sort: true}
+       ,{fixed: 'right', width:150, align:'center', toolbar: '#barDemo'} //这里的toolbar值是模板元素的选择器
+    ]] 
+    ,skin: 'row' //表格风格
+    ,even: true
+    ,page: true //是否显示分页
+    ,limits: [5, 7, 10]
+    ,limit: 5 //每页默认显示的数量
+    ,done: function(res, curr, count){
+      //如果是异步请求数据方式，res即为你接口返回的信息。
+      //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+      //console.log(res);
+      
+      //得到当前页码
+      //console.log(curr); 
+      
+      //得到数据总量
+      //console.log(count);
+      //$("#demo").next().find(".layui-table-main").find("tbody").append("<tr class='editrow'><td>&nbsp;</td><td><input class='layui-input' type='text' placeholder='请输入'></td><td><input class='layui-input' type='text' placeholder='请输入'></td><td><input class='layui-input' type='text' placeholder='请输入'></td><td><input class='layui-input' type='text' placeholder='请输入'></td><td><input class='layui-input' type='text' placeholder='请输入'></td><td><input class='layui-input' type='text' placeholder='请输入'></td><td><input class='layui-input' type='text' placeholder='请输入'></td><td><input class='layui-input' type='text' placeholder='请输入'></td><td align='center'><button type='button' class='layui-btn layui-btn-mini'>保存</button><button type='button' class='layui-btn layui-btn-mini layui-btn-danger'>取消</button></td></tr>");
+      var editrowbtn='<td data-field="9" align="center" data-off="true"><div class="layui-table-cell laytable-cell-1-9 layui-table-btn"> <a class="layui-btn layui-btn-mini" lay-event="save">保存</a> <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="cancel">取消</a> </div></td>';
+      var editrow=['<tr class="editrow editrowbody" data-index="999">',
+      '<td data-field="0">&nbsp;</td>',
+      '<td data-field="id"><div class="layui-table-cell laytable-cell-1-id">999</div><input class="layui-input layui-table-edit1" type="text" placeholder="请输入""></td>',
+      '<td data-field="username"><div class="layui-table-cell laytable-cell-1-username">张三</div><input class="layui-input layui-table-edit1" type="text" placeholder="请输入""></td>',
+      '<td data-field="email"><div class="layui-table-cell laytable-cell-1-email">xx@qq.com</div><input class="layui-input layui-table-edit1" type="text" placeholder="请输入""></td>',
+      '<td data-field="sign"><div class="layui-table-cell laytable-cell-1-sign">我酷故我再</div><input class="layui-input layui-table-edit1" type="text" placeholder="请输入""></td>',
+      '<td data-field="sex"><div class="layui-table-cell laytable-cell-1-sex">男</div><input class="layui-input layui-table-edit1" type="text" placeholder="请输入""></td>',
+      '<td data-field="city"><div class="layui-table-cell laytable-cell-1-city">徐州</div><input class="layui-input layui-table-edit1" type="text" placeholder="请输入""></td>',
+      '<td data-field="joinTime" data-content="2016-10-14"><div class="layui-table-cell laytable-cell-1-joinTime">2017-5-15</div><input class="layui-input layui-table-edit1" type="text" placeholder="请输入""></td>',
+      '<td data-field="experience"><div class="layui-table-cell laytable-cell-1-experience">365</div><input class="layui-input layui-table-edit1" type="text" placeholder="请输入""></td>',
+      editrowbtn,
+      '</tr>'].join("");
+      $("#demo").next().find(".layui-table-main").find("tbody").append(editrow);
+      $("#demo").next().find(".layui-table-fixed").find("tbody").append('<tr class="editrow"  data-index="999" style="height:38px;">'+editrowbtn+'</tr>');
+
+    }    
+  });
+  table.on('checkbox(testtable)', function(obj){
+    //console.log(obj.checked); //当前是否选中状态
+    console.log(obj.data); //选中行的相关数据
+  });
+  $("#addbtn").on("click",function() {
+    $("table[lay-filter='testtable']").next().find(".editrow").show();
+  });
+  //监听工具条
+  table.on('tool(testtable)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+    var data = obj.data; //获得当前行数据
+    var layEvent = obj.event; //获得 lay-event 对应的值
+    var tr = obj.tr; //获得当前行 tr 的DOM对象
+   
+    if(layEvent === 'detail'){ //查看
+      //do somehing
+    } else if(layEvent === 'del'){ //删除
+      layer.confirm('真的删除行么', function(index){
+        obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+        layer.close(index);
+        //向服务端发送删除指令
+      });
+    } else if(layEvent === 'edit'){ //编辑
+      //do something
+      
+      //同步更新缓存对应的值
+      obj.update({
+        username: '123'
+        ,title: 'xxx'
+      });
+    } else if(layEvent === 'save'){ //保存
+      //do something
+      layer.msg("保存添加");
+      console.log(tr);
+    } else if(layEvent === 'cancel'){ //保存
+      //do something
+      layer.msg("取消");
+      $("table[lay-filter='testtable']").next().find(".editrow").hide();
+    }    
+  });  
+  //直接嵌套显示
+  laydate.render({
+    elem: '#test-n1'
+    ,position: 'static'
+    ,done: function(value, date){
+      layer.alert('你选择的日期是：' + value + '<br>获得的对象是' + JSON.stringify(date));
+    }
+  });  
+});
+
+// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，   
+// 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)   
+// 例子：   
+//Format("2016-10-04 8:9:4.423","yyyy-MM-dd hh:mm:ss.S") ==> 2016-10-04 08:09:04.423   
+// Format("1507353913000","yyyy-M-d h:m:s.S")      ==> 2017-10-7 13:25:13.0  
+function Format(datetime,fmt) {
+  if (parseInt(datetime)==datetime) {
+    if (datetime.length==10) {
+      datetime=parseInt(datetime)*1000;
+    } else if(datetime.length==13) {
+      datetime=parseInt(datetime);
+    }
+  }
+  datetime=new Date(datetime);
+  var o = {
+  "M+" : datetime.getMonth()+1,                 //月份   
+  "d+" : datetime.getDate(),                    //日   
+  "h+" : datetime.getHours(),                   //小时   
+  "m+" : datetime.getMinutes(),                 //分   
+  "s+" : datetime.getSeconds(),                 //秒   
+  "q+" : Math.floor((datetime.getMonth()+3)/3), //季度   
+  "S"  : datetime.getMilliseconds()             //毫秒   
+  };   
+  if(/(y+)/.test(fmt))   
+  fmt=fmt.replace(RegExp.$1, (datetime.getFullYear()+"").substr(4 - RegExp.$1.length));   
+  for(var k in o)   
+  if(new RegExp("("+ k +")").test(fmt))   
+  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
+  return fmt;
+}
+console.log(Format("1507353913000","yyyy-M-d h:m:s.S"));
+</script>
+</body>
+</html>

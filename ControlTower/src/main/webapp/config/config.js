@@ -3,12 +3,11 @@
  *
  */
 var _host = location.protocol+'//'+window.location.host;
-var _servPath = '/Megrez';
+var _servPath = '/Megrez/';
 _host += _servPath;
 
-_host = 'http://localhost:7001/megrez/CT/';
-
-console.log(_host)
+_host = 'http://localhost:7001/Megrez/';
+_host = "//localhost:8211/";
 
 function clone(obj) {
 	var o, i, j, k;

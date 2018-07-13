@@ -69,10 +69,11 @@ public class CtReportAction extends AbstractModule {
 
         String rptPath = json.getString("SERVERNAME")+"/trusted/"+ticket+"/"+json.getString("REPORTURL")+"?"+json.getString("URLPARAM");
 
-        LOGGER.debug("rptPath -> "+rptPath);
+        LOGGER.debug("json -> "+json);
 
         model.addAttribute("rptPath", rptPath);
         model.addAttribute("rptName", json.getString("REPORTNAME"));
+        model.addAttribute("login_user", json.getString("LOGIN_USERNAME"));
 
         return "main";
     }

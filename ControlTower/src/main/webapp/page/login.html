@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Y3 - Contrl Tower | Sign in</title>
+    <title>Y3 | Contrl Tower &#8211; Sign in</title>
     <!-- SDK: jQuery -->
     <script src="../depot/SDK/jQuery/jquery.min.js"></script>
     <!-- SDK: layui -->
@@ -12,12 +12,17 @@
     <script src="../config/config.js" charset="utf-8"></script>
     <style>
         .login-main{
-            margin: auto;
-            text-align: center;
-            width: 98%;
+            width: 100%;
+            height: 100%;
         }
         .head-position{
-            margin-top: 20%;
+            background: rgba(103, 43, 140, 1) url("../images/logo/Y3_icon_SC_ControlTower.png") no-repeat 10px 0px;
+            background-size: contain;
+            height: 70px;
+            border-bottom: #ffffff 2px;
+            position: fixed;
+            z-index: 500;
+            width: 100%;
         }
         input{
             width: 300px !important;
@@ -26,17 +31,86 @@
             margin: auto;
         }
         body{
-            background-color: rgba(103, 43, 140, 1);
-            #background: url("../images/logo/Y3-watermark.png") no-repeat right;
+            background-color: #0C0C0C;
+        }
+        form {
+            text-align: center;
+            margin-top: 20%;
+            position: absolute;
+            z-index: 9999;
+            width: 100%;
+            opacity: 1;
+        }
+        .logo-y3-max{
+            position: absolute;
+            z-index: 200;
+            top: 70px;
+            right: 10px;
+            background: url("../images/logo/Y3-watermark.png") no-repeat right;
             background-attachment: fixed;
             background-size: contain;
-            padding-right:50px;
+            width: 50%;
+            overflow: visible;
+            opacity: 1;
+            transition: none;
+            line-height: 0px;
+        }
+        input{
+            opacity: 1;
+        }
+        .logo-titile{
+            font-size: 2em;
+            font-family: fantasy;
+            color: #fff;
+            margin-left: 100px;
+            line-height: 100px;
+        }
+        .background-layer{
+            position: absolute;
+            z-index: 100;
+            background: url("../images/background.fw.jpg") repeat center;
+            background-attachment: fixed;
+            background-size:cover;
+            -webkit-background-size:cover;
+            -moz-background-size:cover;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            opacity: 0.2;
+            clear:both;
+        }
+        .nav-style{
+            background: transparent;
+            float: right;
+            top: 10px;
+            padding: 0 !important;
+        }
+        .nav-style a img{
+            margin-top: 15px;
+            height: 30px;
         }
     </style>
 </head>
 <body>
+
+<header class="layui-elip head-position">
+    <span class="logo-titile">Control Tower</span>
+    <ul class="nav-style layui-nav">
+        <li class="layui-nav-item">
+            <a href="//www.y3technologies.com/capabilities2/solutions/y3-data-analytics-suite-2/" target="view_frame">
+                <img src="../images/logo/Y3-logo.png">
+            </a>
+        </li>
+    </ul>
+    <!--<div class="nav-style">-->
+    <!--<a href="//www.y3technologies.com/capabilities2/solutions/y3-data-analytics-suite-2/" target="view_frame">-->
+        <!--<img src="../images/logo/ct.logo2.png">-->
+    <!--</a>-->
+    <!--</div>-->
+</header>
 <div class="login-main">
-    <header class="layui-elip head-position">USER LOGIN</header>
+    <div class="background-layer"></div>
+    <div class="logo-y3-max"></div>
     <form class="layui-form" method="post" action="sys/user/login">
         <div class="layui-input-inline">
             <input type="text" name="account" required  lay-verify="required" placeholder="username" autocomplete="off" class="layui-input">
@@ -52,6 +126,10 @@
     </form>
 </div>
 <script type="text/javascript">
+
+    var win_height_ = $(window).height();
+    $(".logo-y3-max").css("height", (win_height_-70)+"px");
+
 
     function httpPost(URL, PARAMS) {
         var temp = document.createElement("form");
@@ -86,11 +164,11 @@
 //                async: false,
                 data:fromdata.field,
                 success:function(response){
-                    console.log(response)
                     if(response.state=="1"){
 //                        location.href = _host + "rpt/show/auth"
 //                        $.post( _host + "rpt/show/auth", { user: 26 })
-                        httpPost(_host + "rpt/show/12", { user: 26 })
+                        var userinfo = response.hits[0];
+                        httpPost(_host + "rpt/show/"+userinfo.userid, { user: userinfo.userid })
                     }
                 }
             })
@@ -99,6 +177,9 @@
         });
     });
 
+    layui.use('element', function(){
+        var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+    });
 
 </script>
 </body>
