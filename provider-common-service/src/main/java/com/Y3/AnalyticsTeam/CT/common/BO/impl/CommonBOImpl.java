@@ -1,7 +1,7 @@
 package com.Y3.AnalyticsTeam.CT.common.BO.impl;
 
 import com.Y3.AnalyticsTeam.CT.common.BO.ICommonBO;
-import com.Y3.AnalyticsTeam.CT.common.Util.HttpHelp;
+import com.Y3.AnalyticsTeam.CT.Util.HttpHelp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

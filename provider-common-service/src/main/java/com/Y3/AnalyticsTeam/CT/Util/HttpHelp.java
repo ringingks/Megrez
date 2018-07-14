@@ -1,4 +1,4 @@
-package com.Y3.AnalyticsTeam.CT.common.Util;
+package com.Y3.AnalyticsTeam.CT.Util;
 
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
@@ -17,7 +17,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
