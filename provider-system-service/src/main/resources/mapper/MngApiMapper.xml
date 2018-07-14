@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Y3.AnalyticsTeam.CT.provider.system.DAO.CtMngApiDAO">
+
+	<!--根据需求调整缓存参数：-->
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache">
+		<property name="timeToIdleSeconds" value="300"/>
+		<property name="timeToLiveSeconds" value="900"/>
+		<!-- 同ehcache参数maxElementsInMemory -->
+		<property name="maxEntriesLocalHeap" value="1000"/>
+		<!-- 同ehcache参数maxElementsOnDisk -->
+		<property name="maxEntriesLocalDisk" value="10000000"/>
+		<property name="memoryStoreEvictionPolicy" value="LRU"/>
+	</cache>
+
+	<select id="queryOnLimitRange" resultType="CtApiPO" parameterType="java.lang.Integer">
+		select * from
+		(
+		select rownum rn,t.* from (select * from ct_mng_api order by code) t where rownum &lt; #{endindex}
+		)
+		where rn &gt; #{startindex}
+	</select>
+
+	<select id="countTotal" resultType="java.lang.Integer">
+		select count(*) from ct_mng_api
+	</select>
+
+	<select id="queryByCode" resultType="CtApiPO" parameterType="java.lang.String">
+		select * from ct_mng_api where code=#{code}
+	</select>
+
+	<select id="queryParamsByMainid" resultType="CtApiParamsPO" parameterType="java.lang.String">
+		select * from ct_mng_api_params where mainid = #{mainid}
+	</select>
+
+	<update id="updateAPI" parameterType="CtApiPO">
+		update ct_mng_api
+		<trim prefix="set" suffixOverrides=",">
+			<if test="code != null">code=#{code,jdbcType=VARCHAR},</if>
+			<if test="discription != null">discription=#{discription,jdbcType=VARCHAR},</if>
+			<if test="host != null">host=#{host,jdbcType=VARCHAR},</if>
+			<if test="urlpath != null">urlpath=#{urlpath,jdbcType=VARCHAR},</if>
+			<if test="params != null">params=#{params,jdbcType=VARCHAR},</if>
+			<if test="ascription != null">ascription=#{ascription,jdbcType=VARCHAR},</if>
+			<if test="method != null">method=#{method,jdbcType=VARCHAR},</if>
+			<if test="status != null">status=#{status,jdbcType=INTEGER},</if>
+			<if test="lastupdatetime != null">lastupdatetime=#{lastupdatetime,jdbcType=VARCHAR},</if>
+		</trim>
+		where uuid = #{uuid}
+	</update>
+
+	<insert id="addAPI" parameterType="CtApiPO">
+		insert into ct_mng_api(code,discription,host,urlpath,params,method,ascription,status)
+		values(#{code,jdbcType=VARCHAR},#{discription,jdbcType=VARCHAR},#{host,jdbcType=VARCHAR},#{urlpath,jdbcType=VARCHAR},#{params,jdbcType=VARCHAR},#{method,jdbcType=VARCHAR},#{ascription,jdbcType=VARCHAR},#{status,jdbcType=INTEGER})
+	</insert>
+
+	<delete id="deleteAPIByID" parameterType="java.lang.String">
+		delete ct_mng_api where uuid=#{uuid}
+	</delete>
+
+</mapper>
