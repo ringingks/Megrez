@@ -79,7 +79,7 @@
 	</delete>
 
 	<select id="findCtReportByUserid" resultType="java.util.HashMap">
-		select t.* from ctreport t,ctreport_user t1,ctuser t2
+		select t.*,t2.userid login_userid,t2.username login_username from ctreport t,ctreport_user t1,ctuser t2
 		 where t.repid=t1.repid and t1.userid = t2.userid
 		   and t2.userid=#{userid}
 	</select>
