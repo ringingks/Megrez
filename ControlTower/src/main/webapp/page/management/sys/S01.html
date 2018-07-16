@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Y3 | Control Tower - CONSOLE</title>
+    <link rel="stylesheet" href="../../../depot/SDK/layui/v2.3.0/css/layui.css" media="all">
+    <script src="../../../depot/SDK/jQuery/jquery.min.js" charset="utf-8"></script>
+    <script src="../../../config/config.js" charset="utf-8"></script>
+</head>
+<style>
+    body{
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 191, 179, .01);
+    }
+    .body-card{
+        margin-bottom:15px;
+        border-radius:2px;
+        background-color: rgba(255,255,255,.05);
+        box-shadow:0 1px 2px 0 rgba(0,0,0,.05);
+        width: 100%;
+        height: 100%;
+        /*padding: 1px;*/
+    }
+    .btn-group-style{
+    }
+    .from-style{
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-top: 10px;
+    }
+    .layui-form-pane .layui-inline{
+        margin-right: -4px;
+    }
+    .input-method{
+        min-width: 40px;
+        width: 80px;
+    }
+    .input-method .layui-form-select dl dd.layui-this { background-color: rgba(103, 43, 140, 1) }
+    .input-method .layui-form-select dl { border-color: rgba(103, 43, 140, 1) }
+    .input-urlpath{
+        min-width: 100px;
+        width: 600px;
+    }
+    .layui-input, .layui-textarea, .layui-select,
+    .layui-form-pane .layui-btn-primary,
+    .layui-form-pane .layui-form-item[pane],
+    .layui-layedit, .layui-layedit-tool{border-color: #00bfb3;}
+    .layui-btn-primary{
+        background: #00bfb3;
+        color: #fff !important;
+    }
+    #ds_api_param .from-style .layui-inline .layui-select:hover, .layui-input:hover, .layui-textarea:hover{border:2px solid #00bfb3 !important;}
+    #ds_api_param .from-style .layui-inline .layui-select:focus, .layui-input:focus, .layui-textarea:focus{border:2px solid #00bfb3 !important;}
+    #ds_api_param .from-style .layui-btn-primary:hover{border:2px solid #009387; color: rgba(103, 43, 140, 1)}
+    #ds_api_param .from-style .layui-btn-primary:focus{border:2px solid #00bfb3; color: rgba(103, 43, 140, 1)}
+    .input-params-style{width: 80px}
+    .params-table{
+        margin-top: 2px;
+        min-height: 80px;
+        width: 100%;
+        border-top: 1px solid #e2e2e2;
+    }
+    .params-label {
+        min-width: 200px;
+        width: 430px !important;
+    }
+    .input-params {
+        margin-left: 0px !important;
+    }
+    .input-params input{
+        min-width: 200px;
+        width: 430px !important;
+    }
+</style>
+<script type="text/javascript">
+
+</script>
+<body layadmin-themealias="default">
+<div class="body-card">
+    <ins class="adsbygoogle" style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-6111334333458862" data-ad-slot="3820120620"></ins>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 15px;">
+        <legend>SYSTEM MANAGEMENT : USER</legend>
+    </fieldset>
+
+    <div id="body_table_user" class="" >
+        <div class="btn-group-style">
+            <div class="layui-btn-group btn-group-position">
+                <button class="layui-btn layui-btn-sm" onclick="addRow()" onmouseover="showTips(this,'add a new account')" onmouseout="hideTips()"><i class="layui-icon layui-icon-add-1"></i></button>
+                <button class="layui-btn layui-btn-sm" onclick="del()" onmouseover="showTips(this,'delete a account is chosing')" onmouseout="hideTips()"><i class="layui-icon layui-icon-delete"></i></button>
+            </div>
+        </div>
+
+        <table class="layui-table" lay-data="{height: 'full-240',page:true, url:_host+'sys/user/all' ,id:'ds_user'}" lay-filter="userTableEvent">
+            <thead>
+            <tr>
+                <th lay-data="{type:'checkbox'}"></th>
+                <th lay-data="{field:'rn', width:60 ,sort:true}">No</th>
+                <th lay-data="{field:'username', width:200, sort: true ,style:'cursor: pointer;'}">USERNAME</th>
+                <th lay-data="{field:'agencyname' ,width:'220' ,style:'cursor: pointer;'}">AGENCY</th>
+                <th lay-data="{field:'managername' ,width:'220' ,style:'cursor: pointer;'}">MANAGER</th>
+                <th lay-data="{fixed: 'right', width:'200', align:'center', toolbar: '#barDemo'}"></th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">EDIT</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">DEL</a>
+    </script>
+</div>
+
+</body>
+
+<script src="../../../depot/SDK/layui/v2.3.0/layui.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+    var layer_tips_index;
+    function showTips(e,info) {
+        layer_tips_index = layer.tips(info, e, {tips:[3,'#00C5B9']});
+    }
+    function hideTips() {
+        layer.close(layer_tips_index)
+    }
+
+    function addRow(table) {
+
+    }
+    function deleteRow(data,callback) {
+        var msg  = "delete failed！<br/>ERROR:an exception occurs when executing task!Please contact with your system administrator!";
+        $.ajax({
+            type: 'DELETE'
+            ,url: ''
+            ,contentType: 'application/x-www-form-urlencoded '
+            ,dataType: 'json'
+            ,async: false
+            ,success: function(data) {
+                if(data){
+                    var state = data.state;
+                    if(state && state==="1"){
+                        msg = "delete succesed！";
+                    }else{
+                        msg = "delete failed！<br/>"+data.infos;
+                    }
+                }
+                callback(msg);
+            },
+            error: function(data) {
+                callback(msg);
+            }
+        })
+    }
+
+    // 全局设置弹出层的垂直相对位置
+    layui.use('layer', function(){
+        layer.config({offset: '20%'});
+    });
+
+    // table 框架的主要事件
+    layui.use('table', function () {
+        var table = layui.table;
+
+        //监听表格复选框选择
+        table.on('checkbox(userTableEvent)', function (obj) {
+            console.log(obj)
+        });
+
+        //监听工具条
+        table.on('tool(userTableEvent)', function (obj) {
+            var item = obj.data;
+            var select_field;
+            var select_field_val;
+
+            // edit button event
+            if (obj.event === 'edit') {
+
+                layer.open({
+                    type: 2 //此处以iframe举例
+                    ,title: '当你选择该窗体时，即会在最顶端'
+                    ,area: ['390px', '260px']
+                    ,shade: 0.5
+                    ,maxmin: true
+                    ,content: JSON.stringify(item)
+                    ,btn: ['继续弹出', '全部关闭'] //只是为了演示
+                    ,yes: function(){
+                        $(that).click();
+                    }
+                    ,btn2: function(){
+                        layer.closeAll();
+                    }
+
+                    ,zIndex: layer.zIndex //重点1
+                    ,success: function(layero){
+                        layer.setTop(layero); //重点2
+                    }
+                });
+
+            }
+            // delete button event
+            else if (obj.event === 'del') {
+                deleteRow(item,function(msg){
+                    layer.confirm(msg, function (index) {
+                            obj.del();
+                            layer.close(index);
+                        })
+                    }
+                );
+            }
+        });
+
+    });
+
+</script>
+
+
+</html>

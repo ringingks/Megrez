@@ -74,12 +74,7 @@
     }
 </style>
 <script type="text/javascript">
-    var tableRequestURLinAction = _host+'mng/api';
-    function setTableRequestURL() {
-        if(tableOnShow === "ds_api"){
-            tableRequestURLinAction = _host+'mng/api';
-        }
-    }
+
 </script>
 <body layadmin-themealias="default">
 <div class="body-card">
@@ -89,21 +84,20 @@
         <legend>ARRS: HPB Tracking</legend>
     </fieldset>
 
-    <div id="body_table_api" class="" >
+    <div id="body_table_user" class="" >
         <div class="btn-group-style">
             <div class="layui-btn-group btn-group-position">
                 <button class="layui-btn layui-btn-sm" onclick="addRow()" onmouseover="showTips(this,'add a new param')" onmouseout="hideTips()"><i class="layui-icon layui-icon-add-1"></i></button>
-                <button class="layui-btn layui-btn-sm" onclick="save()" onmouseover="showTips(this,'save modifications')" onmouseout="hideTips()"><i class="layui-icon layui-icon-ok"></i></button>
                 <button class="layui-btn layui-btn-sm" onclick="del()" onmouseover="showTips(this,'delete a param that is chosing')" onmouseout="hideTips()"><i class="layui-icon layui-icon-delete"></i></button>
             </div>
         </div>
 
-        <table class="layui-table" lay-data="{height: 'full-350',page:true, url:tableRequestURLinAction ,id:'ds_api'}" lay-filter="demoEvent">
+        <table class="layui-table" lay-data="{height: 'full-350',page:true, url:_host+'sys/user/all' ,id:'ds_user'}" lay-filter="userTableEvent">
             <thead>
             <tr>
                 <th lay-data="{type:'checkbox'}"></th>
-                <th lay-data="{field:'code', width:80, sort: true ,style:'cursor: pointer;' ,event:'set_code'}">CODE</th>
-                <th lay-data="{field:'discription' ,width:'50%' ,style:'cursor: pointer;' ,edit:'text' ,event:'set_discription'}">DISCRIPTION</th>
+                <th lay-data="{field:'username', width:200, sort: true ,style:'cursor: pointer;' ,event:'set_code'}">NAME</th>
+                <th lay-data="{field:'orgname' ,width:'220' ,style:'cursor: pointer;' ,edit:'text' ,event:'set_name'}">orgname</th>
                 <th lay-data="{fixed: 'right', width:'200', align:'center', toolbar: '#barDemo'}"></th>
             </tr>
             </thead>
@@ -115,47 +109,6 @@
         <!--<a class="layui-btn layui-btn-xs" lay-event="edit">EDIT</a>-->
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">DEL</a>
     </script>
-
-    <!-- param div -->
-    <div class="" id="ds_api_param" hidden>
-        <div class="btn-group-style">
-            <div class="layui-btn-group btn-group-position">
-                <button class="layui-btn layui-btn-sm" onclick="back2Main()" onmouseover="showTips(this,'back to the main list')" onmouseout="hideTips()"><i class="layui-icon layui-icon-left"></i></button>
-                <button class="layui-btn layui-btn-sm" onclick="addRow()" onmouseover="showTips(this,'add a new param')" onmouseout="hideTips()"><i class="layui-icon layui-icon-add-1"></i></button>
-                <button class="layui-btn layui-btn-sm" onclick="save()" onmouseover="showTips(this,'save modifications')" onmouseout="hideTips()"><i class="layui-icon layui-icon-ok"></i></button>
-                <button class="layui-btn layui-btn-sm" onclick="del()" onmouseover="showTips(this,'delete a param that is chosing')" onmouseout="hideTips()"><i class="layui-icon layui-icon-delete"></i></button>
-            </div>
-        </div>
-        <div class="from-style layui-form layui-form-pane">
-            <div class="layui-inline">
-                <div class="input-method layui-input-inline">
-                    <select name="interest" lay-filter="req_method">
-                        <option value="GET">GET</option>
-                        <option value="POST" selected="">POST</option>
-                    </select>
-                </div>
-            </div>
-            <div class="layui-inline">
-                <div class="input-urlpath layui-input-inline">
-                    <input type="text" name="urlpath" lay-verify="urlpath" autocomplete="off" placeholder="Enter request URL" class="layui-input" lay-filter="input_api_path">
-                </div>
-            </div>
-            <button class="input-params-style layui-btn layui-btn-primary">Send</button>
-            <div class="params-table layui-inline">
-                <table class="layui-table" lay-data="{id:'ds_api_params' }" lay-filter="ds_api_params">
-                    <thead>
-                    <tr>
-                        <th lay-data="{field:'' ,width:50}"></th>
-                        <th lay-data="{field:'key', width:'300', sort: true ,edit:'text' ,event:'set_key'}">KEY</th>
-                        <th lay-data="{field:'value' ,width:'300' ,edit:'text' ,event:'set_val'}">VALUE</th>
-                    </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-
-    </div>
-
 </div>
 
 </body>
@@ -166,40 +119,6 @@
     var tableOnShow = "ds_api";
     var actionUUID_ = "";
 
-    function convertDatetime(datetime) {
-        var date = new Date(parseInt(datetime.slice(6)));
-        return date.getFullYear() + '-' + (date.getUTCMonth() + 1) + '-' + date.getUTCDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
-    }
-    function back2Main() {
-        tableOnShow = "ds_api";
-        var isFlowDone = $("input[name='urlpath']").attr("isFlowDone") === "false" ? false : true;
-        var discrip = $("input[name='urlpath']").val();
-
-        if( discrip != "" && actionUUID_ != ""){
-        // if(!isFlowDone && discrip!=""){
-            // if(discrip!="") {
-                layer.confirm(
-                    "the configrue hasn't save yet. <br />Do U want to save it now?"
-                    , {
-                        icon: 3
-                        , btn: ['OK', 'Cancel']
-                        , btn2: function (index) {
-                            $('#body_table_api').show();
-                            $('#ds_api_param').hide();
-                            layer.close(index);
-                        }
-                    }
-                    , function (index) {
-                        $('#body_table_api').show();
-                        $('#ds_api_param').hide();
-                        layer.close(index);
-                    })
-            // }
-        }else{
-            $('#body_table_api').show();
-            $('#ds_api_param').hide();
-        }
-    }
     var layer_tips_index;
     function showTips(e,info) {
         layer_tips_index = layer.tips(info, e, {tips:[3,'#00C5B9']});
