@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Y3.AnalyticsTeam.CT.provider.system.DAO.CaUserDAO">
+
+	<!--根据需求调整缓存参数：-->
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache">
+		<property name="timeToIdleSeconds" value="300"/>
+		<property name="timeToLiveSeconds" value="900"/>
+		<!-- 同ehcache参数maxElementsInMemory -->
+		<property name="maxEntriesLocalHeap" value="1000"/>
+		<!-- 同ehcache参数maxElementsOnDisk -->
+		<property name="maxEntriesLocalDisk" value="10000000"/>
+		<property name="memoryStoreEvictionPolicy" value="LRU"/>
+	</cache>
+
+	<select id="queryUserOnPage" resultType="com.Y3.AnalyticsTeam.CT.provider.system.DTO.UserDTO">
+		select *
+		from (select rownum rn, t1.* from (
+			select t.userid
+					,nvl(t.code,t.name) xcode
+					,t.code usercode
+					,t.name username
+					,t.password userpwd
+					,t.managerid
+					,d1.code managercode
+					,d1.name managername
+					,t.orgid
+					,d2.name agencyname
+					,t.status
+			from ct_causer t, ct_causer d1, ct_dic_agency d2
+			where t.managerid = d1.userid(+)
+			and t.orgid = d2.itemid(+)
+			order by xcode) t1
+		where rownum &lt; #{endindex}) where rn &gt; #{startindex}
+	</select>
+
+	<select id="count" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select count(*) from ct_causer
+		<if test="status>0">
+			where status = #{status}
+		</if>
+	</select>
+
+</mapper>

@@ -25,15 +25,15 @@ public class SystemService extends AbstractModule {
         return super.ResultsBuilder("1","ok",userBO.findUserbyId(_id),null);
     }
 
-    @RequestMapping(value = "/user/name/{_name}", method = RequestMethod.GET)
-    public String findUserByName(@PathVariable(value="_name") String _name) {
-        return super.ResultsBuilder("1","ok",userBO.findUserbyName(_name),null);
-    }
+//    @RequestMapping(value = "/user/name/{_name}", method = RequestMethod.GET)
+//    public String findUserByName(@PathVariable(value="_name") String _name) {
+//        return super.ResultsBuilder("1","ok",userBO.findUserbyName(_name),null);
+//    }
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public String findUserOnPage(@RequestParam("page") int page,@RequestParam("limit") int limit) {
-        return super.ResultsBuilder("1","ok",userBO.findUserOnPage(page,limit),null,userBO.countUserTotal());
-    }
+//    @RequestMapping(value = "/user", method = RequestMethod.GET)
+//    public String findUserOnPage(@RequestParam("page") int page,@RequestParam("limit") int limit) {
+//        return super.ResultsBuilder("1","ok",userBO.findUserOnPage(page,limit),null,userBO.countUserTotal());
+//    }
 
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     public String updateUser(@RequestParam("data") String data){

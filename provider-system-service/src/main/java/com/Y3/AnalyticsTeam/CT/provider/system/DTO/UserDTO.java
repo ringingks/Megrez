@@ -12,31 +12,51 @@ public class UserDTO {
      * USERID
      */
     @JSONField(ordinal=1)
-    private int userid;
+    private String userid;
+    /**
+     * 用户编码 USERCODE
+     */
+    @JSONField(ordinal=2)
+    private String usercode;
     /**
      * 用户名 USERNAME
      */
-    @JSONField(ordinal=2)
+    @JSONField(ordinal=3)
     private String username;
     /**
      * 用户密码 UPASSWD
      */
-    @JSONField(ordinal=3)
-    private String userpwd;
+//    @JSONField(ordinal=4)
+//    private String userpwd;
     /**
-     * 机构id ORGID
-     */
-    @JSONField(ordinal=4)
-    private int orgid;
-    /**
-     * 机构id ORGID
+     *
      */
     @JSONField(ordinal=5)
-    private String orgname;
+    private String managerid;
+    /**
+     *
+     */
+    @JSONField(ordinal=6)
+    private String managercode;
+    /**
+     *
+     */
+    @JSONField(ordinal=7)
+    private String managername;
+    /**
+     * 机构id ORGID
+     */
+    @JSONField(ordinal=8)
+    private String orgid;
+    /**
+     * 机构id agencyname
+     */
+    @JSONField(ordinal=9)
+    private String agencyname;
     /**
      * ACTIVE_IND
      */
-    @JSONField(ordinal=6)
+    @JSONField(ordinal=10)
     private int status;
 
     public int getRn() {
@@ -47,12 +67,20 @@ public class UserDTO {
         this.rn = rn;
     }
 
-    public int getUserid() {
+    public String getUserid() {
         return userid;
     }
 
-    public void setUserid(int userid) {
+    public void setUserid(String userid) {
         this.userid = userid;
+    }
+
+    public String getUsercode() {
+        return usercode;
+    }
+
+    public void setUsercode(String usercode) {
+        this.usercode = usercode;
     }
 
     public String getUsername() {
@@ -63,28 +91,44 @@ public class UserDTO {
         this.username = username;
     }
 
-    public String getUserpwd() {
-        return userpwd;
+    public String getManagerid() {
+        return managerid;
     }
 
-    public void setUserpwd(String userpwd) {
-        this.userpwd = userpwd;
+    public void setManagerid(String managerid) {
+        this.managerid = managerid;
     }
 
-    public int getOrgid() {
+    public String getManagercode() {
+        return managercode;
+    }
+
+    public void setManagercode(String managercode) {
+        this.managercode = managercode;
+    }
+
+    public String getManagername() {
+        return managername;
+    }
+
+    public void setManagername(String managername) {
+        this.managername = managername;
+    }
+
+    public String getOrgid() {
         return orgid;
     }
 
-    public void setOrgid(int orgid) {
+    public void setOrgid(String orgid) {
         this.orgid = orgid;
     }
 
-    public String getOrgname() {
-        return orgname;
+    public String getAgencyname() {
+        return agencyname;
     }
 
-    public void setOrgname(String orgname) {
-        this.orgname = orgname;
+    public void setAgencyname(String agencyname) {
+        this.agencyname = agencyname;
     }
 
     public int getStatus() {

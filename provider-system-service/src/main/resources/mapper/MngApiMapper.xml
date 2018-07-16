@@ -50,8 +50,11 @@
 	</update>
 
 	<insert id="addAPI" parameterType="CtApiPO">
-		insert into ct_mng_api(code,discription,host,urlpath,params,method,ascription,status)
-		values(#{code,jdbcType=VARCHAR},#{discription,jdbcType=VARCHAR},#{host,jdbcType=VARCHAR},#{urlpath,jdbcType=VARCHAR},#{params,jdbcType=VARCHAR},#{method,jdbcType=VARCHAR},#{ascription,jdbcType=VARCHAR},#{status,jdbcType=INTEGER})
+		<selectKey resultType="java.lang.String" keyProperty="uuid" order="BEFORE">
+			SELECT sys_guid() FROM DUAL
+		</selectKey>
+		insert into ct_mng_api(uuid,code,discription,host,urlpath,params,method,ascription,status)
+		values(#{uuid} ,#{code,jdbcType=VARCHAR},#{discription,jdbcType=VARCHAR},#{host,jdbcType=VARCHAR},#{urlpath,jdbcType=VARCHAR},#{params,jdbcType=VARCHAR},#{method,jdbcType=VARCHAR},#{ascription,jdbcType=VARCHAR},#{status,jdbcType=INTEGER})
 	</insert>
 
 	<delete id="deleteAPIByID" parameterType="java.lang.String">

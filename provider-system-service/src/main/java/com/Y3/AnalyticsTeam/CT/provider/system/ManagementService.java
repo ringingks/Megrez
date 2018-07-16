@@ -68,7 +68,9 @@ public class ManagementService extends AbstractModule {
             if(r_<1){
                 return ResultsBuilder("0","no records updated.",null,null);
             }
-            return ResultsBuilder("1","ok.",null,null);
+            JSONObject uuid = new JSONObject();
+            uuid.put("uuid",apiPO.getUuid());
+            return ResultsBuilder("1","ok.",uuid,null);
         }catch (Exception ex){
             LOGGER.error("### ManagementService.updateApi exception ",ex);
             return ResultsBuilder("0",ex.getMessage(),null,null);
