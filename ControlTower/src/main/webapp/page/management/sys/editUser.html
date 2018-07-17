@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Y3 | Control Tower - CONSOLE</title>
+    <link rel="stylesheet" href="../../../depot/SDK/layui/v2.3.0/css/layui.css" media="all">
+    <script src="../../../depot/SDK/jQuery/jquery.min.js" charset="utf-8"></script>
+    <script src="../../../config/config.js" charset="utf-8"></script>
+</head>
+<style>
+    body{
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 191, 179, .01);
+    }
+    .body-card{
+        margin-bottom:15px;
+        border-radius:2px;
+        background-color: rgba(255,255,255,.05);
+        box-shadow:0 1px 2px 0 rgba(0,0,0,.05);
+        width: 100%;
+        height: 100%;
+        /*padding: 1px;*/
+    }
+    .btn-group-style{
+    }
+    .from-style{
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-top: 10px;
+    }
+    .layui-form-pane .layui-inline{
+        margin-right: -4px;
+    }
+    .input-method{
+        min-width: 40px;
+        width: 80px;
+    }
+    .input-method .layui-form-select dl dd.layui-this { background-color: rgba(103, 43, 140, 1) }
+    .input-method .layui-form-select dl { border-color: rgba(103, 43, 140, 1) }
+    .input-urlpath{
+        min-width: 100px;
+        width: 600px;
+    }
+    .layui-input, .layui-textarea, .layui-select,
+    .layui-form-pane .layui-btn-primary,
+    .layui-form-pane .layui-form-item[pane],
+    .layui-layedit, .layui-layedit-tool{border-color: #00bfb3;}
+    .layui-btn-primary{
+        background: #00bfb3;
+        color: #fff !important;
+    }
+    #ds_api_param .from-style .layui-inline .layui-select:hover, .layui-input:hover, .layui-textarea:hover{border:2px solid #00bfb3 !important;}
+    #ds_api_param .from-style .layui-inline .layui-select:focus, .layui-input:focus, .layui-textarea:focus{border:2px solid #00bfb3 !important;}
+    #ds_api_param .from-style .layui-btn-primary:hover{border:2px solid #009387; color: rgba(103, 43, 140, 1)}
+    #ds_api_param .from-style .layui-btn-primary:focus{border:2px solid #00bfb3; color: rgba(103, 43, 140, 1)}
+    .input-params-style{width: 80px}
+    .params-table{
+        margin-top: 2px;
+        min-height: 80px;
+        width: 100%;
+        border-top: 1px solid #e2e2e2;
+    }
+    .params-label {
+        min-width: 200px;
+        width: 430px !important;
+    }
+    .input-params {
+        margin-left: 0px !important;
+    }
+    .input-params input{
+        min-width: 200px;
+        width: 430px !important;
+    }
+</style>
+<script type="text/javascript">
+
+</script>
+<body layadmin-themealias="default">
+<div class="body-card">
+    <ins class="adsbygoogle" style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-6111334333458862" data-ad-slot="3820120620"></ins>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 15px;">
+        <legend>ARRS: HPB Tracking</legend>
+    </fieldset>
+
+    <div id="body_table_user" class="" >
+        <div class="btn-group-style">
+            <div class="layui-btn-group btn-group-position">
+                <button class="layui-btn layui-btn-sm" onclick="addRow()" onmouseover="showTips(this,'add a new param')" onmouseout="hideTips()"><i class="layui-icon layui-icon-add-1"></i></button>
+                <button class="layui-btn layui-btn-sm" onclick="del()" onmouseover="showTips(this,'delete a param that is chosing')" onmouseout="hideTips()"><i class="layui-icon layui-icon-delete"></i></button>
+            </div>
+        </div>
+
+        <table class="layui-table" lay-data="{height: 'full-350',page:true, url:_host+'sys/user/all' ,id:'ds_user'}" lay-filter="userTableEvent">
+            <thead>
+            <tr>
+                <th lay-data="{type:'checkbox'}"></th>
+                <th lay-data="{field:'username', width:200, sort: true ,style:'cursor: pointer;' ,event:'set_code'}">NAME</th>
+                <th lay-data="{field:'orgname' ,width:'220' ,style:'cursor: pointer;' ,edit:'text' ,event:'set_name'}">orgname</th>
+                <th lay-data="{fixed: 'right', width:'200', align:'center', toolbar: '#barDemo'}"></th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="detail">VIEW</a>
+        <!--<a class="layui-btn layui-btn-xs" lay-event="edit">EDIT</a>-->
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">DEL</a>
+    </script>
+</div>
+
+</body>
+
+<script src="../../../depot/SDK/layui/v2.3.0/layui.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+    var tableOnShow = "ds_api";
+    var actionUUID_ = "";
+
+    var layer_tips_index;
+    function showTips(e,info) {
+        layer_tips_index = layer.tips(info, e, {tips:[3,'#00C5B9']});
+    }
+    function hideTips() {
+        layer.close(layer_tips_index)
+    }
+    function saveApiMain(data,obj,callback) {
+        if(data != obj){ data.uuid = obj.uuid; }
+        var isOk = false;
+        var url = _host+"mng/api";
+        var msg = "update failed！<br/>ERROR:an exception occurs when executing task!Please contact with your system administrator!";
+        var obj={};
+        $.ajax({
+            type: 'POST'
+            ,url: url
+            ,data: {data:JSON.stringify(data)}
+            ,contentType: 'application/x-www-form-urlencoded '
+            ,dataType: 'json'
+            ,async: false
+            ,success: function(data) {
+                if(data){
+                    var state = data.state;
+                    if(state && state==="1"){
+                        msg = "update succesed！";
+                        isOk = true;
+                        obj.uuid = data.hits.uuid;
+                    }else{
+                        msg = "update failed！<br/>"+data.infos;
+                    }
+                }else{
+                }
+                if(callback!=null){callback(msg,isOk,obj);}
+            },
+            error: function(data) {
+                if(callback!=null){callback(msg,isOk,obj);}
+            }
+        })
+    }
+
+    function deleteRow(data,callback) {
+        var msg  = "delete failed！<br/>ERROR:an exception occurs when executing task!Please contact with your system administrator!";
+        $.ajax({
+            type: 'DELETE'
+            ,url: tableRequestURLinAction +"/"+ data.uuid
+            ,contentType: 'application/x-www-form-urlencoded '
+            ,dataType: 'json'
+            ,async: false
+            ,success: function(data) {
+                if(data){
+                    var state = data.state;
+                    if(state && state==="1"){
+                        msg = "delete succesed！";
+                    }else{
+                        msg = "delete failed！<br/>"+data.infos;
+                    }
+
+                }
+                callback(msg);
+            },
+            error: function(data) {
+                callback(msg);
+            }
+        })
+    }
+
+    // 全局设置弹出层的垂直相对位置
+    layui.use('layer', function(){
+        layer.config({offset: '20%'});
+    });
+
+    // table 框架的主要事件
+    layui.use('table', function () {
+        var table = layui.table;
+        var select_api;
+
+        //监听表格复选框选择
+        table.on('checkbox(demoEvent)', function (obj) {
+            console.log(obj)
+        });
+
+        table.on('edit(ds_api)', function (obj) {
+            if(isModify){
+            } if(selectCellVal != obj.value ){
+                isModify = true;
+            }
+        });
+
+        //监听工具条
+        table.on('tool(demoEvent)', function (obj) {
+            var item = obj.data;
+            var select_field;
+            var select_field_val;
+            var isEmptyUUID = true ,isEmptyDiscrp = true;
+            $("input[name='urlpath']").val("")
+
+            if(!item || item.uuid==="" || item.uuid===null){
+            }else{
+                isEmptyUUID = false;
+                actionUUID_ = item.uuid;
+            }
+            if(!item || item.discription==="" || item.discription===null){
+            }else{
+                isEmptyDiscrp = false;
+            }
+
+            for(k in item){
+                var val_ = item[k];
+                if( obj.event === ('set_'+k) ) {
+                    select_field = k;
+                    select_field_val = val_;
+                    if (!isEmptyUUID) { // 新增的row，不用弹出框进行编辑
+                        layer.prompt({
+                            formType: 2
+                            , title: 'EDIT[' + k + ']'
+                            , value: val_
+                            //,offset: '20%'
+                            , btn: ['OK', 'Cancel']
+                            }
+                            , function (value, index) {
+                            layer.close(index);
+                            var d = {};
+                            var isDone = false;
+                            eval("d." + select_field + " = value")
+                            saveApiMain(d, item, function (msg,isOk) {
+                                isDone = isOk;
+                                layer.alert(msg, {icon: 0})
+                            });
+                            //同步更新表格和缓存对应的值
+                            eval("obj.update({ " + select_field + ":value })")
+                        });
+                    }
+                }
+            }
+
+            // view button event
+            if (obj.event === 'detail') {
+                var isDone = false; // 是否更新成功
+                if(isEmptyDiscrp){ // discription 需要有值
+                    layer.msg('Need a discription!')
+                    return;
+                }
+                if(isEmptyUUID){
+                    saveApiMain(item, item, function (msg,isOk,o) {
+                        if(isOk){
+                            layer.alert(msg, {title:'System Info' ,icon: 0 ,btn:['OK']});
+                            isDone = isOk;
+                            obj.update({uuid:o.uuid}) // 更新成功后，更新表格对象中的uuid，防止重复点击更新
+                        }
+                    })
+                }
+                if(isDone)
+                    return;
+
+                $('#body_table_api').hide();
+                $('#ds_api_param').show();
+                tableOnShow = "ds_api_params";
+                var requestPath = "";
+                isDone = false; // 补充内容标记
+
+                // 参数主属性
+                var host = item.host;
+                if(host){
+                    if(!host.endsWith('/')) host = host+'/';
+                    isDone = true;
+                }else{
+                    host = "";
+                }
+                if(item.urlpath){
+                    requestPath = host+item.urlpath;
+                }
+                $("input[name='urlpath']").val(requestPath)
+
+                if(item.method) {
+                    var req_method_ = item.method.toUpperCase();
+                    $("select[name='interest']").find("option[value=" + req_method_ + "]").attr("selected", true);
+                    layui.form.render('select'); // render the FORM to set the default
+                }
+                //重载 ds_api_params 的数据
+                table.reload('ds_api_params', {
+                    url: _host+'mng/api/params/'+item.uuid
+                })
+
+            }
+            // delete button event
+            else if (obj.event === 'del') {
+                deleteRow(item,function(msg){
+                    layer.confirm(msg, function (index) {
+                            obj.del();
+                            layer.close(index);
+                        })
+                    }
+                );
+            }
+//            else if (obj.event === 'edit') {
+//                layer.alert('编辑行：<br>' + JSON.stringify(data))
+//            }
+        });
+
+        /* ********** 参数框的编辑 ********** */
+        var selectCellVal;
+        var isModify = false;
+
+        table.on('tool(ds_api_params)', function (obj) {
+            var data = obj.data;
+            for(var k_ in data){
+                if( obj.event == ('set_'+k_) ){
+                    eval("selectCellVal = data."+k_)
+                }
+            }
+        })
+
+        table.on('edit(ds_api_params)', function (obj) {
+            if(isModify){
+            } if(selectCellVal != obj.value ){
+                isModify = true;
+            }
+        });
+
+    });
+
+    function addRow(table) {
+
+        var tmp = [] ,obj = {};
+        var tableDataInAction = layui.table.cache[tableOnShow];
+        console.log(22,tableDataInAction)
+        if(tableOnShow === "ds_api_params"){
+            obj.key=null;
+            obj.value=null;
+        }else{
+            for(k in tableDataInAction[0]){
+                eval(" obj."+k+" = null ")
+            }
+        }
+        tmp.push(obj)
+        tmp = tmp.concat(tableDataInAction)
+        layui.table.reload(tableOnShow,{data: tmp, url:null});
+    }
+
+
+</script>
+
+
+</html>
