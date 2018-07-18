@@ -41,4 +41,12 @@
 		</if>
 	</select>
 
+	<insert id="add" parameterType="CaUserPO">
+		<selectKey resultType="java.lang.String" keyProperty="userid" order="BEFORE">
+			SELECT sys_guid() FROM DUAL
+		</selectKey>
+		insert into ct_causer(userid,code,name,managerid,orgid,status)
+		values(#{userid} ,#{code,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{managerid,jdbcType=VARCHAR},#{orgid,jdbcType=VARCHAR},{status,jdbcType=INTEGER})
+	</insert>
+
 </mapper>

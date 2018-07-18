@@ -9,5 +9,6 @@ public interface ICaMenuBO {
      * @param userid
      * @return
      */
-    public List findMenuByUserid(String userid);
+    List findMenuByUserid(String userid);
+
 }

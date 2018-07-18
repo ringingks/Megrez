@@ -3,6 +3,7 @@ package com.Y3.AnalyticsTeam.CT.provider.system.BO.impl;
 import com.Y3.AnalyticsTeam.CT.provider.system.BO.ICaUserBO;
 import com.Y3.AnalyticsTeam.CT.provider.system.DAO.CaUserDAO;
 import com.Y3.AnalyticsTeam.CT.provider.system.DTO.UserDTO;
+import com.Y3.AnalyticsTeam.CT.provider.system.PO.CaUserPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,5 +25,10 @@ public class CaUserBOImpl extends ModelBO implements ICaUserBO {
     @Override
     public int count(int status) {
         return caUserDAO.count(status);
+    }
+
+    @Override
+    public String addNewUser(CaUserPO user) {
+        return caUserDAO.add(user);
     }
 }

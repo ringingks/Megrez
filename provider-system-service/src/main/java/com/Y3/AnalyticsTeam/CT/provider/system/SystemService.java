@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("sys")
+@RequestMapping("sys/tem")
 public class SystemService extends AbstractModule {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
