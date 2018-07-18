@@ -5,6 +5,7 @@
     <title>Y3 | Control Tower - CONSOLE</title>
     <link rel="stylesheet" href="../../../depot/SDK/layui/v2.3.0/css/layui.css" media="all">
     <script src="../../../depot/SDK/jQuery/jquery.min.js" charset="utf-8"></script>
+    <script src="../../../depot/SDK/jQuery/jquery.form.js" charset="utf-8"></script>
     <script src="../../../config/config.js" charset="utf-8"></script>
 </head>
 <style>
@@ -31,8 +32,16 @@
         width: 80%;
     }
     #editForm .layui-form-item .layui-input-block input{
-        max-width: 350px;
+        max-width: 550px;
         min-width: 150px;
+    }
+    .layui-layer-page .layui-layer-content{
+        position: relative;
+        overflow: visible !important;
+        height: 380px !important;
+    }
+    .layui-layer-page .layui-layer-btn{
+        max-width: 650px;
     }
 </style>
 <script type="text/javascript">
@@ -42,13 +51,30 @@
         }
         return 'INACTIVE';
     }
+
+    /***
+     * 初始化弹出框的内容
+     * @param data
+     */
     function initForm(data) {
-        $("#editForm input[name='usercode']").val(data.usercode);
-        $("#editForm input[name='username']").val(data.username);
-        $("#editForm input[name='agency']").val(data.agencyname);
-        $("#editForm input[name='manager']").val(data.managername);
-        if(data.status!=1)
-            $("#editForm input[name='status']").remove('checked');
+        if(data!=null) {
+            $("#editForm input[name='usercode']").val(data.usercode);
+            $("#editForm input[name='username']").val(data.username);
+            $("#editForm input[name='agency']").val(data.agencyname);
+//            $("#editForm input[name='manager']").val(data.managername);
+            if (data.status === 1) {
+                $("#editForm input[name='status']").attr("checked", true)
+                $("#editForm input[name='status']").attr("value", 1);
+                layui.form.render('checkbox')
+            }
+        }else{
+            $("#editForm input[name='usercode']").val('');
+            $("#editForm input[name='username']").val('');
+            $("#editForm input[name='agency']").val('');
+            $("#editForm input[name='manager']").val('');
+            $("#editForm input[name='status']").attr("checked", false)
+            layui.form.render('checkbox')
+        }
     }
 </script>
 <body layadmin-themealias="default">
@@ -62,12 +88,12 @@
     <div id="body_table_user" class="" >
         <div class="btn-group-style">
             <div class="layui-btn-group btn-group-position">
-                <button class="layui-btn layui-btn-sm" onclick="addRow()" onmouseover="showTips(this,'add a new account')" onmouseout="hideTips()"><i class="layui-icon layui-icon-add-1"></i></button>
+                <button class="layui-btn layui-btn-sm" onclick="addRecord()" onmouseover="showTips(this,'add a new account')" onmouseout="hideTips()"><i class="layui-icon layui-icon-add-1"></i></button>
                 <button class="layui-btn layui-btn-sm" onclick="del()" onmouseover="showTips(this,'delete a account is chosing')" onmouseout="hideTips()"><i class="layui-icon layui-icon-delete"></i></button>
             </div>
         </div>
 
-        <table class="layui-table" lay-data="{height: 'full-240',page:true, url:_host+'sys/user/all' ,id:'ds_user'}" lay-filter="userTableEvent">
+        <table class="layui-table" lay-data="{height: 'full-240',page:true, url:_host+'sys/user' ,id:'ds_user'}" lay-filter="userTableEvent">
             <thead>
             <tr>
                 <th lay-data="{type:'checkbox'}"></th>
@@ -91,17 +117,23 @@
 
 </body>
 
-<div id="editForm" class="layui-form edit-form" hidden>
+<form id="editForm" class="layui-form edit-form" hidden>
     <div class="layui-form-item" name="usercode">
-        <label class="layui-form-label">USERCODE</label>
+        <label class="layui-form-label">CODE</label>
         <div class="layui-input-block">
             <input type="text" name="usercode" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item" name="username">
-        <label class="layui-form-label">USERNAME</label>
+        <label class="layui-form-label">NAME</label>
         <div class="layui-input-block">
             <input type="text" name="username" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item" name="userpwd">
+        <label class="layui-form-label">PASSWORD</label>
+        <div class="layui-input-block">
+            <input type="password" name="userpwd" placeholder="********" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item" name="agency">
@@ -110,19 +142,28 @@
             <input type="text" name="agency" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
+    <div class="select-manager-style">
     <div class="layui-form-item" name="manager">
         <label class="layui-form-label">MANAGER</label>
-        <div class="layui-input-block">
-            <input type="text" name="manager" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+        <div class="layui-input-inline">
+            <select name="manager" lay-verify="required" lay-search="" lay-filter="managerEvent">
+                <option value="">Please Enter</option>
+                <option value="11">11</option>
+                <option value="22">22</option>
+                <option value="33">33</option>
+                <option value="44">44</option>
+                <option value="55">55</option>
+            </select>
         </div>
+    </div>
     </div>
     <div class="layui-form-item" name="status">
         <label class="layui-form-label">STATUS</label>
         <div class="layui-input-block">
-            <input type="checkbox" name="status" lay-skin="switch" lay-text="DEACTIVE|ACTIVE" checked>
+            <input type="checkbox" name="status" lay-skin="switch" lay-filter="statusEvent" lay-text="ACTIVE|DEACTIVE" value=0>
         </div>
     </div>
-</div>
+</form>
 
 <script src="../../../depot/SDK/layui/v2.3.0/layui.js" charset="utf-8"></script>
 <script type="text/javascript">
@@ -134,9 +175,56 @@
     function hideTips() {
         layer.close(layer_tips_index)
     }
+    // 全局设置弹出层的垂直相对位置
+    layui.use('layer', function(){
+        layer.config({offset: '5%'});
+    });
 
-    function addRow(table) {
+    /***
+     * 弹出编辑框
+     * @param callback
+     */
+    function showEditLayer() {
+        layer.open({
+            type: 1
+            ,title: '<B>EDITER</B>'
+            ,area: ['550px', '500px']
+            ,shade: 0.5
+            ,maxmin: true
+            ,content: $('#editForm')
+            ,btn: ['COMMIT', 'CANCEL'] //只是为了演示
+            ,yes: function(index,layero){
+                var inputForm = $(layero).find("#editForm")
+                inputForm.ajaxSubmit({
+                    url:_host+'sys/user'
+                    ,type:'post'
+                    ,dataType:'json'
+                    ,contentType: 'application/x-www-form-urlencoded'
+                    ,success:function(result){
+                        console.log(44,result)
+                    }
+                });
+            }
+            ,btn2: function(){
+                layer.closeAll();
+            }
+            ,zIndex: layer.zIndex //重点1
+            ,success: function(layero){
+                layer.setTop(layero); //重点2
+            }
+        });
+    }
+    
+    function actionAdd() {
 
+    }
+
+    /***
+     * 添加记录
+     */
+    function addRecord() {
+        initForm(null);
+        showEditLayer()
     }
     function deleteRow(data,callback) {
         var msg  = "delete failed！<br/>ERROR:an exception occurs when executing task!Please contact with your system administrator!";
@@ -163,10 +251,6 @@
         })
     }
 
-    // 全局设置弹出层的垂直相对位置
-    layui.use('layer', function(){
-        layer.config({offset: '20%'});
-    });
 
     // table 框架的主要事件
     layui.use('table', function () {
@@ -182,38 +266,17 @@
             var item = obj.data;
             var select_field;
             var select_field_val;
+            console.log(11,item)
 
             // edit button event
             if (obj.event === 'edit') {
-
-                initForm(item)
-
-                layer.open({
-                    type: 1
-                    ,title: '<B>EDITER</B>'
-                    ,area: ['450px', '380px']
-                    ,shade: 0.5
-                    ,maxmin: true
-                    ,content: $('#editForm')
-                    ,btn: ['COMMIT', 'CANCEL'] //只是为了演示
-                    ,yes: function(){
-                        $(that).click();
-                    }
-                    ,btn2: function(){
-                        layer.closeAll();
-                    }
-
-                    ,zIndex: layer.zIndex //重点1
-                    ,success: function(layero){
-                        layer.setTop(layero); //重点2
-                    }
-                });
-
+                initForm(item);
+                showEditLayer()
             }
             // delete button event
             else if (obj.event === 'del') {
                 deleteRow(item,function(msg){
-                    layer.confirm(msg, function (index) {
+                    layer.alert(msg, function (index) {
                             obj.del();
                             layer.close(index);
                         })
@@ -223,6 +286,24 @@
         });
 
     });
+
+
+    layui.use('form', function () {
+        var form = layui.form;
+
+        form.on('select(managerEvent)', function (data) {
+            console.log(62,data.value); //得到被选中的值
+        });
+
+        form.on('switch(statusEvent)', function(data){
+            if(data.elem.checked){
+                data.elem.value = 1;
+            }else{
+                data.elem.value = 0;
+            }
+            form.render()
+        });
+    })
 
 </script>
 
