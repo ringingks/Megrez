@@ -1,0 +1,55 @@
+# 注册服务的端口号
+server:
+  port: 8871
+
+spring:
+  application:
+    # 服务名称
+    name: control-tower-backend
+  cloud:
+    config:
+      discovery:
+        enabled: true
+  datasource:
+    url: jdbc:oracle:thin:@10.202.34.180:1521:YSDUAT06
+    username: CT_DM_1
+    password: CT_DM_1
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    filters: config,mergeStat
+    maxActive: 20
+    initialSize: 0
+    maxWait: 60000
+    minIdle: 0
+    #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 1 from dual
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    #dbc_connectionInitSqls: SET NAMES utf8mb4
+    removeAbandoned: true
+    removeAbandonedTimeout: 1800
+    logAbandoned: true
+
+eureka:
+  client:
+    # 注册服务器的地址：服务提供者和服务消费者都要依赖这个地址
+    serviceUrl:
+#      defaultZone: http://10.202.34.144:9002/eureka/
+#      defaultZone: http://114.215.243.48:9001/eureka/
+      defaultZone: http://10.201.3.153:9001/eureka/
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.Y3.AnalyticsTeam.CT.backend.PO
+  config-location: classpath:config/mybatis-config.xml
+
+
+# 日志输出控制
+logging:
+  level:
+    root: INFO
+    org.springframework.security: INFO
