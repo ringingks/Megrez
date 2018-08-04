@@ -11,10 +11,12 @@
     <modules>
         <module>EurekaServer</module>
         <module>ControlTower</module>
-        <module>GateWayServer</module>
         <module>provider-system-service</module>
         <module>provider-report-service</module>
         <module>provider-common-service</module>
+        <module>Gemini-gateway</module>
+        <module>Cancer</module>
+        <module>ControlTower_BackEnd</module>
     </modules>
 
     <name>Megrez</name>
