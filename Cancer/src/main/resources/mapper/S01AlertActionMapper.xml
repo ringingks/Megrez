@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Y3.AnalyticsTeam.CT.Cancer.DAO.S01AlertActionDAO">
+
+	<!--根据需求调整缓存参数：-->
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache">
+		<property name="timeToIdleSeconds" value="300"/>
+		<property name="timeToLiveSeconds" value="900"/>
+		<!-- 同ehcache参数maxElementsInMemory -->
+		<property name="maxEntriesLocalHeap" value="1000"/>
+		<!-- 同ehcache参数maxElementsOnDisk -->
+		<property name="maxEntriesLocalDisk" value="10000000"/>
+		<property name="memoryStoreEvictionPolicy" value="LRU"/>
+	</cache>
+
+	<select id="queryAlertText" resultType="com.Y3.AnalyticsTeam.CT.Cancer.DTO.AlertTextDTO">
+		select t1.name keeper, t1.tel, t1.email, t2.subject, t2.text
+		from CT_S01_MANAGERLIST t1, ct_s01_alertcontent t2, ct_s01_alertaction t3 where t1.billid = t3.keeper and t2.billid = t3.alert_text
+		and t1.status=1 and t3.rugroup = #{rugroup}
+		order by keeper
+	</select>
+
+</mapper>

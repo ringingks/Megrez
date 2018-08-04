@@ -33,14 +33,21 @@ spring:
     removeAbandoned: true
     removeAbandonedTimeout: 1800
     logAbandoned: true
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    connectionTimeout: 5000
+    soTimeout: 5000
+    database: 0
 
 eureka:
   client:
     # 注册服务器的地址：服务提供者和服务消费者都要依赖这个地址
     serviceUrl:
-#      defaultZone: http://10.202.34.144:9002/eureka/
-      defaultZone: http://114.215.243.48:9001/eureka/
+      defaultZone: http://10.201.3.153:9001/eureka/
+#      defaultZone: http://114.215.243.48:9001/eureka/
 #      defaultZone: http://127.0.0.1:9001/eureka/
+
 
 #请求处理的超时时间
 ribbon:
@@ -59,7 +66,7 @@ hystrix:
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.Y3.AnalyticsTeam.CT.Cancer.PO
+  type-aliases-package: com.Y3.AnalyticsTeam.CT.Cancer.PO,com.Y3.AnalyticsTeam.CT.Cancer.DTO
   config-location: classpath:config/mybatis-config.xml
 
 
@@ -67,8 +74,8 @@ mybatis:
 logging:
   path: ./logs/Cancer_service_task.log
 #  level:
-    #root: INFO
-    #org.springframework.security: INFO
+#    root: INFO
+#    org.springframework.security: INFO
 
 jobs.initialDelay: 5000
 jobs.fixedRate: 60000

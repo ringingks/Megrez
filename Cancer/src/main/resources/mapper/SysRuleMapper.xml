@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Y3.AnalyticsTeam.CT.Cancer.DAO.SysRuleDAO">
+
+	<!--根据需求调整缓存参数：-->
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache">
+		<property name="timeToIdleSeconds" value="300"/>
+		<property name="timeToLiveSeconds" value="900"/>
+		<!-- 同ehcache参数maxElementsInMemory -->
+		<property name="maxEntriesLocalHeap" value="1000"/>
+		<!-- 同ehcache参数maxElementsOnDisk -->
+		<property name="maxEntriesLocalDisk" value="10000000"/>
+		<property name="memoryStoreEvictionPolicy" value="LRU"/>
+	</cache>
+
+	<select id="queryRuMainSetByRefID" resultType="com.Y3.AnalyticsTeam.CT.Cancer.DTO.SysRuleMainSet">
+		select r2.suid,r1.name,r1.alert_level,s1.discription,s1.frequency,r1.suid groupid
+		  from CT_SYS_RUGROUP r1,CT_SYS_RUMAIN  r2,CT_S01_ALERTRULE s1
+		 where r1.suid = r2.groupid and r1.refid = s1.billid and s1.code=#{code}
+		<if test="status!=null">
+			and r1.status=#{status}
+		</if>
+	</select>
+
+	<select id="queryRuItemByMainid" resultType="com.Y3.AnalyticsTeam.CT.Cancer.DTO.SysRuleItemSet">
+	select r3.elementcode, r3.expression, r4.valueset, r4.isnum from CT_SYS_RUITEM r3, CT_SYS_RUVALUE r4
+	where r3.suid = r4.ruitemid and r3.rumainid = #{mainID}
+	</select>
+
+</mapper>
