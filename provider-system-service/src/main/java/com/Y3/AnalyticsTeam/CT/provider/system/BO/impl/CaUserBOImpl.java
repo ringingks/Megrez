@@ -28,7 +28,21 @@ public class CaUserBOImpl extends ModelBO implements ICaUserBO {
     }
 
     @Override
-    public String addNewUser(CaUserPO user) {
-        return caUserDAO.add(user);
+    public String updateUser(CaUserPO user) {
+        String userid = null;
+        if(user.getUserid()!=null && !user.getUserid().equals("")){
+            LOGGER.info("### CaUserBOImpl.updateUser -> update a exists user ###");
+            caUserDAO.update(user);
+        }else {
+            LOGGER.info("### CaUserBOImpl.updateUser -> add a new user ###");
+            caUserDAO.add(user);
+        }
+        userid = user.getUserid();
+        return userid;
+    }
+
+    @Override
+    public void deleteUser(String userid) {
+        caUserDAO.delete(userid);
     }
 }

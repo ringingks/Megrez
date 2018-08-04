@@ -30,7 +30,7 @@
 			from ct_causer t, ct_causer d1, ct_dic_agency d2
 			where t.managerid = d1.userid(+)
 			and t.orgid = d2.itemid(+)
-			order by xcode) t1
+			order by upper(xcode)) t1
 		where rownum &lt; #{endindex}) where rn &gt; #{startindex}
 	</select>
 
@@ -46,7 +46,24 @@
 			SELECT sys_guid() FROM DUAL
 		</selectKey>
 		insert into ct_causer(userid,code,name,managerid,orgid,status)
-		values(#{userid} ,#{code,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{managerid,jdbcType=VARCHAR},#{orgid,jdbcType=VARCHAR},{status,jdbcType=INTEGER})
+		values(#{userid},#{code,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{managerid,jdbcType=VARCHAR},#{orgid,jdbcType=VARCHAR},#{status,jdbcType=INTEGER})
 	</insert>
+
+	<update id="update" parameterType="CaUserPO">
+		update ct_causer
+		<trim prefix="set" suffixOverrides=",">
+			<if test="name != null">name=#{name,jdbcType=VARCHAR},</if>
+			<if test="code != null">code=#{code,jdbcType=VARCHAR},</if>
+			<if test="managerid != null">name=#{managerid,jdbcType=VARCHAR},</if>
+			<if test="orgid != null">orgid=#{orgid,jdbcType=VARCHAR},</if>
+			<if test="status != null">status=#{status,jdbcType=INTEGER},</if>
+			<if test="lastupdatetime != null">lastupdatetime=#{lastupdatetime,jdbcType=VARCHAR},</if>
+		</trim>
+		where userid = #{userid}
+	</update>
+
+	<delete id="delete">
+		delete ct_causer where userid=#{userid}
+	</delete>
 
 </mapper>

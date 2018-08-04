@@ -59,6 +59,9 @@ public class UserDTO {
     @JSONField(ordinal=10)
     private int status;
 
+    @JSONField(ordinal=10)
+    private String userpwd;
+
     public int getRn() {
         return rn;
     }
@@ -137,5 +140,13 @@ public class UserDTO {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getUserpwd() {
+        return userpwd;
+    }
+
+    public void setUserpwd(String userpwd) {
+        this.userpwd = userpwd;
     }
 }

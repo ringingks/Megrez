@@ -14,5 +14,9 @@ public interface CaUserDAO {
 
     int count(@Param("status") int status);
 
-    String add(CaUserPO user);
+    void add(CaUserPO user);
+
+    void update(CaUserPO user);
+
+    void delete(@Param("userid")String userid);
 }

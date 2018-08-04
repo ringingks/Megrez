@@ -16,5 +16,7 @@ public interface ICaUserBO {
      * @param user
      * @return
      */
-    String addNewUser(CaUserPO user);
+    String updateUser(CaUserPO user);
+
+    void deleteUser(String userid);
 }

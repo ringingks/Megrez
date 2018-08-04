@@ -24,14 +24,42 @@ public class CaUserService extends AbstractModule {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public String addNewUser(@ModelAttribute UserDTO user) {
-//        CaUserPO user = (CaUserPOrPO)JSONObject.toJavaObject( JSONObject.parseObject(data),CaUserPO.class );
+    public String updateUser(@ModelAttribute UserDTO user) {
+        try{
+            JSONObject r = new JSONObject();
+            r.put("userid",userBO.updateUser(convert2User(user)));
+            return super.ResultsBuilder("1","ok",r,null);
+        }catch (Exception ex){
+            LOGGER.error("### CaUserService.updateUser exception ###",ex);
+            return super.ResultsBuilder("0","",null,null);
+        }
+    }
 
-        return super.ResultsBuilder("1","ok",userBO.addNewUser(convert2User(user)),null);
+    @DeleteMapping(value = "{userid}")
+    public String updateUser(@PathVariable(value="userid") String userid) {
+        try{
+            userBO.deleteUser(userid);
+            return super.ResultsBuilder("1","ok",null,null);
+        } catch (Exception ex){
+            LOGGER.error("### CaUserService.updateUser exception ###",ex);
+            return super.ResultsBuilder("0","Failed!",null,null);
+        }
+
     }
 
     protected CaUserPO convert2User(UserDTO user){
-        return null;
+        CaUserPO userPO = new CaUserPO();
+        userPO.setUserid(user.getUserid());
+        userPO.setCode(user.getUsercode());
+        userPO.setName(user.getUsername());
+        userPO.setManagerid(user.getManagerid());
+        if(user.getUserpwd() != null && !user.getUserpwd().equals("")) {
+            userPO.setPassword(user.getUserpwd());
+        }
+        userPO.setOrgid(user.getOrgid());
+        userPO.setStatus(user.getStatus());
+
+        return userPO;
     }
 
 }
