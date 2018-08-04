@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Y3 | Control Tower - CONSOLE</title>
+    <link rel="stylesheet" href="../../../../depot/SDK/layui/v2.3.0/css/layui.css" media="all">
+    <script src="../../../../depot/SDK/jQuery/jquery.min.js" charset="utf-8"></script>
+    <script src="../../../../depot/SDK/jQuery/jquery.form.js" charset="utf-8"></script>
+    <script src="../../../../config/config.js" charset="utf-8"></script>
+    <script src="../../../../depot/SDK/echarts/v4.0.4/echarts.min.js"></script>
+</head>
+<style>
+    body {
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 191, 179, .01);
+    }
+    .body-card{
+        width: 96%;
+        margin-left: 2%;
+        margin-right: 2%;
+    }
+    .collapse-btn-save{
+        width: 25px;
+        float: right;
+        margin: 6px 0px 0 0;
+        line-height: 30px;
+    }
+    .item-lable-style{
+        width: 150px;
+        font-weight: bold;
+        text-align: left;
+        margin-left: 25px;
+    }
+    .switch-style{
+        margin-right: 125px;
+        float: right;
+    }
+    .text-style{
+        margin-right: 5px;
+        min-width: 100px;
+        width: 100px;
+        float: right;
+    }
+    .uint-label{
+        width: 100px;
+        float: right;
+        margin-right: 20px;
+        line-height: 40px;
+        font-size: 0.8em;
+    }
+    #demo{
+        height: 350px;
+    }
+</style>
+<script type="text/javascript">
+    var default_request_url_ = _host + 'sys/user';
+
+</script>
+<body>
+<div class="body-card">
+    <ins class="adsbygoogle" style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-6111334333458862" data-ad-slot="3820120620"></ins>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 15px;">
+        <legend>HPB : Temperature Excursion Management</legend>
+    </fieldset>
+
+    <div class="layui-collapse" lay-filter="test">
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">
+                ALERT SENDER
+                <!--<button id="alert_sender" class="collapse-btn-save layui-btn layui-btn-sm layui-btn-primary">-->
+                    <!--<i class="layui-icon layui-icon-more-vertical"></i>-->
+                <!--</button>-->
+                <div id="alert_sender" class="collapse-btn-save"><i class="layui-icon layui-icon-more-vertical"></i></div>
+            </h2>
+
+
+            <div class="layui-colla-content layui-show">
+                <div class="layui-form">
+                    <div class="layui-form-item" name="status">
+                        <label class="layui-form-label item-lable-style">SENDER SWITCH</label>
+                        <div class="layui-input-block switch-style">
+                            <input type="checkbox" name="status" lay-skin="switch" lay-filter="statusEvent" lay-text="ACTIVE|DEACTIVE" value=1 checked>
+                        </div>
+                    </div>
+
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 15px;">
+                    </fieldset>
+
+                    <div class="layui-form-item" name="frequency">
+                        <label class="layui-form-label item-lable-style">FREQUENCY</label>
+                        <div class="layui-input-block">
+                            <label class="uint-label">(UNIT: Second)</label>
+                            <input type="text" name="frequency" autocomplete="off" placeholder="" class="text-style layui-input">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">Temperature Axis</h2>
+            <div class="layui-colla-content layui-show">
+                <div id="demo"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('demo'));
+
+    function randomData() {
+        now = new Date(+now + oneDay);
+        value = Math.random();
+        return {
+            name: now.toString(),
+            value: [
+                [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
+                Math.round(value)
+            ]
+        }
+    }
+
+    var data = [];
+    var now = +new Date(1997, 9, 3);
+    var oneDay = 24 * 3600 * 1000;
+    var value = Math.random() ;
+    for (var i = 0; i < 1000; i++) {
+        data.push(randomData());
+//        data = [-10,-5,0,5,10,15,20,25,30,35,40,45,50]
+    }
+
+    option = {
+        title: {
+            text: 'Devices Temp Monitoring'
+        },
+        tooltip: {
+            trigger: 'axis',
+            formatter: function (params) {
+                params = params[0];
+                var date = new Date(params.name);
+                return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
+            },
+            axisPointer: {
+                animation: false
+            }
+        },
+        xAxis: {
+            type: 'time',
+            splitLine: {
+                show: false
+            }
+        },
+        yAxis: {
+            type: 'value',
+            boundaryGap: [0, '100%'],
+            splitLine: {
+                show: false
+            }
+        },
+        visualMap: {
+            top: 10,
+            right: 10,
+            pieces: [{
+                gt: 0,
+                lte: 0.5,
+                color: '#096'
+            }, {
+                gt: 0.5,
+                lte: 1,
+                color: '#ffde33'
+            }, {
+                gt: 1,
+                lte: 2,
+                color: '#ff9933'
+            }, {
+                gt: 2,
+                lte: 3,
+                color: '#cc0033'
+            }, {
+                gt: 3,
+                lte: 4,
+                color: '#660099'
+            }, {
+                gt: 4,
+                color: '#7e0023'
+            }],
+            outOfRange: {
+                color: '#999'
+            }
+        },
+        series: [{
+            name: '模拟数据',
+            type: 'line',
+            showSymbol: false,
+            hoverAnimation: false,
+            data: data
+        }]
+    };
+
+    setInterval(function () {
+
+        for (var i = 0; i < 5; i++) {
+            data.shift();
+            data.push(randomData());
+        }
+
+        myChart.setOption({
+            series: [{
+                data: data
+            }]
+        });
+    }, 3000);
+
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+
+</script>
+<script src="../../../../depot/SDK/layui/v2.3.0/layui.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+    var isBtnClick = false;
+    $("#alert_sender").on("click",function () {
+        isBtnClick = true;
+        alert(isBtnClick);
+    })
+
+    layui.use(['element', 'layer'], function () {
+        if(!isBtnClick) {
+            var element = layui.element;
+        }
+    })
+
+    layui.use('form', function () {
+        var form = layui.form;
+    })
+</script>
+
+
+</html>

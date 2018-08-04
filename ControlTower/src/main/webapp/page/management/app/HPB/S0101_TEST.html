@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Y3 | Control Tower - CONSOLE</title>
+    <link rel="stylesheet" href="../../../../depot/SDK/layui/v2.3.0/css/layui.css" media="all">
+    <script src="../../../../depot/SDK/jQuery/jquery.min.js" charset="utf-8"></script>
+    <script src="../../../../depot/SDK/jQuery/jquery.form.js" charset="utf-8"></script>
+    <script src="../../../../config/config.js" charset="utf-8"></script>
+    <script src="../../../../depot/SDK/echarts/v4.0.4/echarts.min.js"></script>
+</head>
+<style>
+    body {
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 191, 179, .01);
+    }
+    .body-card{
+        width: 96%;
+        margin-left: 2%;
+        margin-right: 2%;
+    }
+    .collapse-btn-save{
+        width: 25px;
+        float: right;
+        margin: 6px 0px 0 0;
+        line-height: 30px;
+    }
+    .item-lable-style{
+        width: 150px;
+        font-weight: bold;
+        text-align: left;
+        margin-left: 25px;
+    }
+    .switch-style{
+        margin-right: 125px;
+        float: right;
+    }
+    .text-style{
+        margin-right: 5px;
+        min-width: 50px;
+        width: 80px;
+        float: right;
+    }
+    .uint-label{
+        width: 100px;
+        float: right;
+        margin-right: 20px;
+        line-height: 40px;
+        font-size: 0.8em;
+    }
+    #demo{
+        height: 200px;
+    }
+    .div-monitors-style{
+        height: 200px;
+    }
+    #btn_apply_switch{
+        width: 50px !important;
+        position: absolute;
+        z-index:999;
+        margin-top: 10px;
+        right: 5%;
+        background: #f2f2f2;
+        box-shadow: 1px 1px 1px #888888;
+    }
+</style>
+<script type="text/javascript">
+    var data = [];
+    var showDeviceGroup = "";
+    function initAlertRuleConf() {
+        $.ajax({
+            type: 'GET'
+            , url: _host + "app/s01/f01/sender/conf"
+            , contentType: 'application/x-www-form-urlencoded '
+            , dataType: 'json'
+            , async: false
+            , success: function (data) {
+                if (data.state && data.state === "1") {
+                    var d = data.hits[0];
+                    $("input[name='frequency']").val(d.frequency);
+                    if(d.status===1){
+                        $("input[name='status']").attr("checked", true)
+                    }
+                }
+            },
+            error: function (data) {
+            }
+        })
+    }
+
+    var lastDeviceDatas = [];
+
+    $(function(){
+        initAlertRuleConf()
+        drawMonitorDashborad()
+        setInterval(function(){lastDeviceDatas = refrshLastRec()},60000)
+    })
+
+
+
+</script>
+<body>
+<div class="body-card">
+    <ins class="adsbygoogle" style="display:inline-block;width:970px;height:90px"
+         data-ad-client="ca-pub-6111334333458862" data-ad-slot="3820120620"></ins>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 15px;">
+        <legend>HPB : Temperature Excursion Management</legend>
+    </fieldset>
+
+    <div class="layui-collapse" lay-filter="testCollapse">
+        <div class="layui-colla-item">
+            <button class="layui-btn layui-btn-xs layui-btn-primary" id="btn_apply_switch">Apply</button>
+            <h2 class="layui-colla-title">
+                ALERT SENDER
+                <!--<div id="alert_sender" class="collapse-btn-save"><i class="layui-icon layui-icon-more-vertical"></i></div>-->
+            </h2>
+
+            <div class="layui-colla-content">
+
+                <div class="layui-form" lay-filter="mainConf">
+                    <div class="layui-form-item" name="status">
+                        <label class="layui-form-label item-lable-style">SENDER SWITCH</label>
+                        <div class="layui-input-block switch-style">
+                            <input type="checkbox" name="status" lay-skin="switch" lay-filter="statusEvent" lay-text="ACTIVE|DEACTIVE">
+                        </div>
+                    </div>
+
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 15px;">
+                    </fieldset>
+
+                    <div class="layui-form-item" name="frequency">
+                        <label class="layui-form-label item-lable-style">FREQUENCY</label>
+                        <div class="layui-input-block">
+                            <label class="uint-label">(UNIT: Second)</label>
+                            <input type="text" name="frequency" autocomplete="off" placeholder="" class="text-style layui-input">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">Keeper</h2>
+            <div class="layui-colla-content">
+                <table class="layui-table" lay-data="{height: '280',page:false ,url:_host+'app/s01/f01/keepers' ,id:'ds_user'}" lay-filter="userTableEvent">
+                    <thead>
+                    <tr>
+                        <!--<th lay-data="{field:'alertlev', width:10 ,sort:true ,style:'display: none;'}">alertlev</th>-->
+                        <th lay-data="{field:'groupname', width:220, sort: true ,style:'cursor: pointer;'}">LEV DESCRIPTION</th>
+                        <th lay-data="{field:'keeper' ,width:'180' ,style:'cursor: pointer;'}">NOTICE MEMBER</th>
+                        <th lay-data="{field:'tel' ,width:'220' ,style:'cursor: pointer;'}">TEL</th>
+                        <th lay-data="{field:'email', width:320, sort: true ,style:'cursor: pointer;'}">E-MAIL</th>
+                        <!--<th lay-data="{fixed: 'right', width:'200', align:'center', toolbar: '#barDemo'}"></th>-->
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">Temperature Axis</h2>
+            <div class="layui-colla-content layui-show">
+                <div id="temp_monitors"></div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</body>
+<script type="text/javascript">
+
+    var tempTimeAixData;
+    var seriesDatas;
+
+    function initLast30MinsData() {
+        var data = []
+        $.ajax({
+            type: 'GET'
+            , url: _host + "app/s01/f01/sender/data"
+            , contentType: 'application/x-www-form-urlencoded '
+            , dataType: 'json'
+            , async: false
+            , success: function (result) {
+                var hits = result.hits;
+                data = hits;
+            }
+        })
+        return data;
+    }
+
+    function initSeriesData(hits) {
+        var data = {};
+        for(var key in hits){
+            var hit;
+            var SeriesData = [];
+            eval("hit = hits."+key)
+            for(var i=0;i<hit.length;i++){
+                var item = hit[i]
+                var d = {}
+                d.name = item.reporttime;
+                d.value = [item.reporttime,item.temp]
+                d.sourcedata = item
+                SeriesData.push(d)
+            }
+            eval("data."+key+"=SeriesData")
+        }
+
+        return data;
+    }
+
+    tempTimeAixData = initLast30MinsData();
+
+    function refrshLastRec(){
+        var data = [];
+        $.ajax({
+            type: 'GET'
+            , url: _host + "app/s01/f01/sender/last"
+            , contentType: 'application/x-www-form-urlencoded '
+            , dataType: 'json'
+            , async: false
+            , success: function (result) {
+                var hits = result.hits;
+                console.log(77,hits)
+                for(var i=0;i<hits.length;i++){
+                    var item = hits[i];
+                    data.push({
+                        name: item.reporttime
+                        ,value:[item.reporttime ,item.temp]
+                        ,sourcedata: item
+                    })
+                }
+            }
+        })
+
+        return data;
+    }
+
+    var myChart;
+
+    function initEchart(_device_id,data) {
+
+        myChart = echarts.init(document.getElementById("device_"+_device_id));
+
+        option = {
+            title: {
+                text: 'Device['+_device_id+'] Temp Monitor'
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function (params) {
+                    params = params[0];
+                    return params.name +"<br />"+params.value[1]+"℃"
+                },
+                axisPointer: {
+                    animation: false
+                }
+            },
+            xAxis: {
+                type: 'time'
+                ,splitLine: {
+                    show: false
+                }
+                ,boundaryGap: false
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%'],
+                splitLine: {
+                    show: false
+                }
+            },
+            visualMap: {
+                top: 5,
+                right: 5,
+                precision:1,
+                show: false
+                ,pieces: [{
+                    lte: 2.0,
+                    color: '#161d99'
+                }, {
+                    gt: 2.0,
+                    lte: 2.5,
+                    color: '#161db4'
+                }, {
+                    gt: 2.5,
+                    lte: 3.0,
+                    color: '#7786ff'
+                }, {
+                    gt: 3.0,
+                    lte: 6.5,
+                    color: '#07a520'
+                }, {
+                    gt: 6.5,
+                    lte: 7.5,
+                    color: '#c3b249'
+                }, {
+                    gt: 7.5,
+                    lte: 8.0,
+                    color: '#ea7531'
+                }, {
+                    gte: 8.0,
+                    color: '#ff1e08'
+                }],
+                outOfRange: {
+                    color: '#ff1e08'
+                }
+            },
+            series: [{
+                name: 'Temperature',
+                type: 'line',
+                showSymbol: false,
+                hoverAnimation: false,
+                data: data
+            }]
+        };
+
+        setInterval(function () {
+            data.shift();
+
+            for(var i=0;i<lastDeviceDatas.length;i++){
+                var item = lastDeviceDatas[i]
+                if(item.sourcedata.devicegroup === _device_id){
+                    data.push(item);
+                    break;
+                }
+            }
+
+            myChart.setOption({
+                series: [{
+                    data: data
+                }]
+            });
+        }, 60000);
+
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+    }
+
+    function drawMonitorDashborad() {
+        $("#temp_monitors").empty();
+        var html_div = "";
+        for(var key in tempTimeAixData){
+            html_div += "<div class='div-monitors-style' id='device_"+key+"'></div>";
+        }
+        $("#temp_monitors").html(html_div)
+
+        refrshLastRec();
+
+        var seriesDatas = initSeriesData(tempTimeAixData)
+        for(var key in tempTimeAixData){
+            var seriesData;
+            eval("seriesData = seriesDatas."+key)
+            initEchart(key,seriesData);
+        }
+    }
+
+
+</script>
+<script src="../../../../depot/SDK/layui/v2.3.0/layui.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+    $("#btn_apply_switch").on('click',function () {
+        alert(21212)
+    })
+
+    layui.use(['element', 'layer'], function () {
+        var element = layui.element;
+
+        element.on('collapse(testCollapse)', function(data){
+            // console.log(data.show); //得到当前面板的展开状态，true或者false
+            // console.log(data.title); //得到当前点击面板的标题区域DOM对象
+            // console.log(data.content.children("#demo")); //得到当前点击面板的内容区域DOM对象
+
+            if(data.show){
+                myChart.setOption(option,true)
+            }
+        });
+
+    })
+
+    layui.use('form', function () {
+        var form = layui.form;
+    })
+
+    layui.use('table', function () {
+        var table = layui.table;
+    })
+</script>
+
+
+</html>

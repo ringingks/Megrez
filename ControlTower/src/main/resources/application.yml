@@ -7,7 +7,7 @@ eureka:
     # 注册服务器的地址：服务提供者和服务消费者都要依赖这个地址
     serviceUrl:
 #      defaultZone: http://10.202.16.211:9999/eureka/
-      defaultZone: http://127.0.0.1:9001/eureka/
+      defaultZone: http://10.201.3.153:9001/eureka/
 #      defaultZone: http://114.215.243.48:9001/eureka/
 
 spring:

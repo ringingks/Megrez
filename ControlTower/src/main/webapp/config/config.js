@@ -7,7 +7,7 @@ var _servPath = '/Megrez/';
 _host += _servPath;
 
 _host = 'http://localhost:7001/Megrez/';
-_host = "//localhost:8211/";
+// _host = "//localhost:8211/";
 
 function clone(obj) {
 	var o, i, j, k;

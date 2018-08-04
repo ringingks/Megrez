@@ -45,11 +45,13 @@
     }
 </style>
 <script type="text/javascript">
+    var default_request_url_ = _host+'sys/user';
+
     function staRemark(status) {
         if(status === 1){
             return 'ACTIVE';
         }
-        return 'INACTIVE';
+        return 'DEACTIVE';
     }
 
     /***
@@ -57,25 +59,68 @@
      * @param data
      */
     function initForm(data) {
+        console.log(11,data)
         if(data!=null) {
+            $("#editForm input[name='userid']").val(data.userid);
             $("#editForm input[name='usercode']").val(data.usercode);
             $("#editForm input[name='username']").val(data.username);
             $("#editForm input[name='agency']").val(data.agencyname);
-//            $("#editForm input[name='manager']").val(data.managername);
             if (data.status === 1) {
                 $("#editForm input[name='status']").attr("checked", true)
                 $("#editForm input[name='status']").attr("value", 1);
-                layui.form.render('checkbox')
             }
         }else{
+            $("#editForm input[name='userid']").val('');
             $("#editForm input[name='usercode']").val('');
             $("#editForm input[name='username']").val('');
+            $("#editForm input[name='userpwd']").val('');
             $("#editForm input[name='agency']").val('');
             $("#editForm input[name='manager']").val('');
             $("#editForm input[name='status']").attr("checked", false)
-            layui.form.render('checkbox')
         }
+        layui.form.render('checkbox')
     }
+
+    function initSelectOption(){
+        var request_url_aagency = _host+'sys/dic/agency?limit=-1&page=1';
+        var msg  = "Operation failed！<br/>ERROR:an exception occurs when executing task!Please contact with your system administrator!";
+        $('select[name="manager"]').empty();
+        $.ajax({
+            type: 'GET'
+            ,url: request_url_aagency
+            ,contentType: 'application/x-www-form-urlencoded '
+            ,dataType: 'json'
+            ,async: false
+            ,success: function(data) {
+                if(data.state && data.state==="1"){
+                    msg = "Operation Acceptance!";
+                    var hits = data.hits;
+                    var options = "<option value=''></option>";
+                    for(var i=0;i<hits.length;i++){
+                        var item = hits[i]
+                        options += "<option value='"+item.itemid+"'>"+item.name+"</option>";
+                    }
+                    $('select[name="manager"]').html(options)
+                }else{
+                    msg = "Operation failed！<br/>"+data.infos;
+                }
+                console.log(data)
+            },
+            error: function(data) {
+            }
+        })
+    }
+
+    $(function(){
+        initSelectOption();
+    })
+
+//    setTimeout(function () {
+//        $('select[name="manager"]').next().find('.layui-select-title input').click(function () {
+//            alert(11212)
+//            initSelectOption()
+//        })
+//    },1000)
 </script>
 <body layadmin-themealias="default">
 <div class="body-card">
@@ -93,7 +138,7 @@
             </div>
         </div>
 
-        <table class="layui-table" lay-data="{height: 'full-240',page:true, url:_host+'sys/user' ,id:'ds_user'}" lay-filter="userTableEvent">
+        <table class="layui-table" lay-data="{height: 'full-240',page:true ,url:default_request_url_ ,id:'ds_user'}" lay-filter="userTableEvent">
             <thead>
             <tr>
                 <th lay-data="{type:'checkbox'}"></th>
@@ -118,16 +163,22 @@
 </body>
 
 <form id="editForm" class="layui-form edit-form" hidden>
+    <div class="layui-form-item" name="userid" hidden>
+        <label class="layui-form-label">ID</label>
+        <div class="layui-input-block">
+            <input type="text" name="userid" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
     <div class="layui-form-item" name="usercode">
         <label class="layui-form-label">CODE</label>
         <div class="layui-input-block">
-            <input type="text" name="usercode" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" name="usercode" autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item" name="username">
         <label class="layui-form-label">NAME</label>
         <div class="layui-input-block">
-            <input type="text" name="username" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" name="username" autocomplete="off" placeholder="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item" name="userpwd">
@@ -147,7 +198,7 @@
         <label class="layui-form-label">MANAGER</label>
         <div class="layui-input-inline">
             <select name="manager" lay-verify="required" lay-search="" lay-filter="managerEvent">
-                <option value="">Please Enter</option>
+                <option value=""></option>
                 <option value="11">11</option>
                 <option value="22">22</option>
                 <option value="33">33</option>
@@ -177,7 +228,7 @@
     }
     // 全局设置弹出层的垂直相对位置
     layui.use('layer', function(){
-        layer.config({offset: '5%'});
+        layer.config({offset: '18%'});
     });
 
     /***
@@ -196,27 +247,34 @@
             ,yes: function(index,layero){
                 var inputForm = $(layero).find("#editForm")
                 inputForm.ajaxSubmit({
-                    url:_host+'sys/user'
+                     url: default_request_url_
                     ,type:'post'
                     ,dataType:'json'
                     ,contentType: 'application/x-www-form-urlencoded'
+                    ,async: false
                     ,success:function(result){
-                        console.log(44,result)
+                        if(result.state && result.state==="1"){
+                            layer.alert(
+                                "Operation Acceptance!<br />Notice: Initial password is '1qaz2wsx', you can change it yourself in [USER CENTER]"
+                                ,{title:'System Info' ,icon: 1 ,btn:['OK'] ,zIndex:layer.zIndex+1,yes:function () {layer.closeAll();}}
+                            )
+                        }else{
+                            layer.alert(
+                                "ERROR:an exception occurs when executing task!Please contact with your system administrator!"
+                                ,{title:'System Info' ,icon: 2 ,btn:['OK'] ,zIndex:layer.zIndex+1,yes:function () {layer.closeAll();}}
+                            )
+                        }
                     }
                 });
             }
             ,btn2: function(){
                 layer.closeAll();
             }
-            ,zIndex: layer.zIndex //重点1
-            ,success: function(layero){
-                layer.setTop(layero); //重点2
-            }
+//            ,zIndex: layer.zIndex //重点1
+//            ,success: function(layero){
+//                layer.setTop(layero); //重点2
+//            }
         });
-    }
-    
-    function actionAdd() {
-
     }
 
     /***
@@ -225,12 +283,15 @@
     function addRecord() {
         initForm(null);
         showEditLayer()
+        $("div[name='userpwd']").hide()
     }
-    function deleteRow(data,callback) {
-        var msg  = "delete failed！<br/>ERROR:an exception occurs when executing task!Please contact with your system administrator!";
+    function deleteRecord(data,callback) {
+        var msg  = "Operation failed！<br/>ERROR:an exception occurs when executing task!Please contact with your system administrator!";
+        var status = 0;
+        console.log(data)
         $.ajax({
             type: 'DELETE'
-            ,url: ''
+            ,url: default_request_url_ +"/"+ data.userid
             ,contentType: 'application/x-www-form-urlencoded '
             ,dataType: 'json'
             ,async: false
@@ -238,15 +299,16 @@
                 if(data){
                     var state = data.state;
                     if(state && state==="1"){
-                        msg = "delete succesed！";
+                        msg = "Operation Acceptance!";
+                        status = 1;
                     }else{
-                        msg = "delete failed！<br/>"+data.infos;
+                        msg = "Operation failed！<br/>"+data.infos;
                     }
                 }
-                callback(msg);
+                callback(msg,status);
             },
             error: function(data) {
-                callback(msg);
+                callback(msg,status);
             }
         })
     }
@@ -272,13 +334,18 @@
             if (obj.event === 'edit') {
                 initForm(item);
                 showEditLayer()
+                $("div[name='userpwd']").show()
             }
             // delete button event
             else if (obj.event === 'del') {
-                deleteRow(item,function(msg){
+                deleteRecord(item,function(msg,status){
+                    console.log(55,status)
                     layer.alert(msg, function (index) {
+                        if(status===1) {
                             obj.del();
-                            layer.close(index);
+                            table.render();
+                        }
+                        layer.close(index);
                         })
                     }
                 );
