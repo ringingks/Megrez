@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Y3.AnalyticsTeam.CT.Yildun.DAO.S01AlertRuleDAO">
+
+	<!--根据需求调整缓存参数：-->
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache">
+		<property name="timeToIdleSeconds" value="300"/>
+		<property name="timeToLiveSeconds" value="900"/>
+		<!-- 同ehcache参数maxElementsInMemory -->
+		<property name="maxEntriesLocalHeap" value="1000"/>
+		<!-- 同ehcache参数maxElementsOnDisk -->
+		<property name="maxEntriesLocalDisk" value="10000000"/>
+		<property name="memoryStoreEvictionPolicy" value="LRU"/>
+	</cache>
+
+	<select id="findBycode" resultType="com.Y3.AnalyticsTeam.CT.Yildun.PO.S01AlertRulePO">
+		select * from ct_s01_alertrule where code = #{code}
+	</select>
+
+	<select id="findLast30MinsLiveData" resultType="java.util.Map">
+		<!--select groupname "devicegroup",temp "temp",createtime "reporttime",-->
+		<!--row_number() over(partition by locationguid order by mingroup) rn-->
+		<!--from (-->
+		<!--select locationguid,mingroup,max(temperature) temp,max(groupname) groupname,max(createtime) createtime-->
+		<!--from (-->
+		<!--select t.device_name,t.temperature,t.createtime,t.locationguid-->
+		<!--,case when instr(t.device_name, '-') > 1 then substr(t.device_name, 1, instr(t.device_name, '-') - 1) else t.device_name end groupname-->
+		<!--,substr(t.createtime, 1, 16) mingroup-->
+		<!--from ct_rec_api_hpblive t-->
+		<!--where t.createtime > to_char(sysdate - 30 / (24 * 60),'yyyy-mm-dd hh24:mi:ss'-->
+		<!--)-->
+		<!--)-->
+		<!--group by locationguid, mingroup-->
+		<!--)-->
+		select t.device_name "device",
+		t.temperature "temp",
+		t.createtime "reporttime",
+		t.locationguid "locationguid",
+		case
+		when instr(t.device_name, '-') > 1 then
+		substr(t.device_name, 1, instr(t.device_name, '-') - 1)
+		else
+		t.device_name
+		end "groupname",
+		substr(t.createtime, 1, 16) "timegroup"
+		from ct_rec_api_hpblive t
+		where t.createtime >
+		to_char(sysdate - 15 / (24 * 60), 'yyyy-mm-dd hh24:mi:ss')
+		order by "groupname", "timegroup"
+	</select>
+
+	<select id="findLastData" resultType="java.util.Map">
+		<!--select device_name "device",temperature "temp",createtime "createtime" from (-->
+		<!--select t.device_name,t.temperature,t.createtime,row_number()over(partition by t.device_name order by t.createtime desc) rn-->
+		<!--from ct_rec_api_hpblive t where t.createtime > to_char(sysdate-5/(24*60),'yyyy-mm-dd hh24:mi:ss')-->
+		<!--) where rn = 1-->
+		select groupname "devicegroup",temp "temp",createtime "reporttime" from (
+		select groupname,temp,createtime,row_number() over(partition by locationguid order by mingroup) rn
+		from (select locationguid,mingroup,max(temperature) temp,max(groupname) groupname,max(createtime) createtime
+		from (select t.device_name,t.temperature,t.createtime,t.locationguid,case when instr(t.device_name, '-') > 1 then substr(t.device_name, 1, instr(t.device_name, '-') - 1) else t.device_name end groupname,substr(t.createtime, 1, 16) mingroup
+		from ct_rec_api_hpblive t
+		where t.createtime > to_char(sysdate - 5 / (24 * 60),'yyyy-mm-dd hh24:mi:ss'))
+		group by locationguid, mingroup)) where rn=1
+	</select>
+
+	<select id="querykeeper" resultType="java.util.Map">
+		select d2.name||':'||d2.description "groupname",d1.name "keeper",d1.tel "tel",d1.email "email",d2.alert_level "alertlev"
+		from ct_s01_alertrule t,ct_s01_managerlist d1,ct_sys_rugroup d2,ct_s01_alertaction c
+		where t.billid = c.alert_id
+		and d1.billid = c.keeper
+		and d2.suid = c.rugroup
+		order by d2.alert_level,d1.name
+	</select>
+
+	<insert id="insertS01AlertRuleMainConf" parameterType="com.Y3.AnalyticsTeam.CT.Yildun.PO.S01AlertRulePO">
+		insert into ct_s01_alertrule(code,discription,frequency,status)
+		values(#{code},#{discription},#{frequency},#{status})
+	</insert>
+
+	<update id="updateS01AlertRuleMainConf" parameterType="com.Y3.AnalyticsTeam.CT.Yildun.PO.S01AlertRulePO">
+		update ct_s01_alertrule t set t.status=1,t.discription=,t.frequency=,t.code=,t.lastupdatetime=
+		where billid=
+		<trim prefix="set" suffixOverrides=",">
+			<if test="status != null">status=#{status,jdbcType=INTEGER},</if>
+			<if test="discription != null">discription=#{discription,jdbcType=VARCHAR},</if>
+			<if test="frequency != null">frequency=#{frequency,jdbcType=INTEGER},</if>
+			<if test="code != null">code=#{code,jdbcType=VARCHAR},</if>
+			<if test="lastupdatetime != null">lastupdatetime=#{lastupdatetime,jdbcType=VARCHAR},</if>
+		</trim>
+		where billid = #{billid}
+	</update>
+
+</mapper>
