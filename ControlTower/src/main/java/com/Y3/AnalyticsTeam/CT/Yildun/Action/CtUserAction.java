@@ -1,7 +1,7 @@
-package com.Y3.AnalyticsTeam.CT.Action;
+package com.Y3.AnalyticsTeam.CT.Yildun.Action;
 
-import com.Y3.AnalyticsTeam.CT.BO.ReportBO;
-import com.Y3.AnalyticsTeam.CT.BO.UserBO;
+import com.Y3.AnalyticsTeam.CT.Yildun.BO.ReportBO;
+import com.Y3.AnalyticsTeam.CT.Yildun.BO.UserBO;
 import com.Y3.AnalyticsTeam.CT.consumer.SystemService;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("sys")

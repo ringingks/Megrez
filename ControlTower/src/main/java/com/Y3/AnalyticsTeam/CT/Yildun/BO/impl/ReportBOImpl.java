@@ -1,6 +1,6 @@
-package com.Y3.AnalyticsTeam.CT.BO.impl;
+package com.Y3.AnalyticsTeam.CT.Yildun.BO.impl;
 
-import com.Y3.AnalyticsTeam.CT.BO.ReportBO;
+import com.Y3.AnalyticsTeam.CT.Yildun.BO.ReportBO;
 import org.springframework.stereotype.Service;
 
 @Service

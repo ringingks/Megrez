@@ -1,6 +1,6 @@
 package com.Y3.AnalyticsTeam.CT.Controller.S01;
 
-import com.Y3.AnalyticsTeam.CT.Action.AbstractModule;
+import com.Y3.AnalyticsTeam.CT.Yildun.Action.AbstractModule;
 import com.Y3.AnalyticsTeam.CT.consumer.S01Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

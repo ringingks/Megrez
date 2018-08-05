@@ -1,4 +1,4 @@
-package com.Y3.AnalyticsTeam.CT.BO;
+package com.Y3.AnalyticsTeam.CT.Yildun.BO;
 
 public interface ReportBO {
 

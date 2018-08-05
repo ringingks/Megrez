@@ -52,8 +52,13 @@
     #demo{
         height: 200px;
     }
-    .div-monitors-style{
+    .div-monitors-group-style{
+        /*min-height: 200px;*/
+    }
+    .div-monitors-device-style{
         height: 200px;
+        width: 45%;
+        float: left;
     }
     #btn_apply_switch{
         width: 50px !important;
@@ -196,17 +201,24 @@
         var data = {};
         for(var key in hits){
             var hit;
-            var SeriesData = [];
             eval("hit = hits."+key)
-            for(var i=0;i<hit.length;i++){
-                var item = hit[i]
-                var d = {}
-                d.name = item.reporttime;
-                d.value = [item.reporttime,item.temp]
-                d.sourcedata = item
-                SeriesData.push(d)
+            console.log(21,hit)
+            for(var k in hit) {
+                if( k === "group" )
+                    continue;
+                var dat;
+                var SeriesData = [];
+                eval("dat = hit."+k)
+                for (var i = 0; i < dat.length; i++) {
+                    var item = dat[i]
+                    var d = {}
+                    d.name = item.reporttime;
+                    d.value = [item.reporttime, item.temp]
+                    d.sourcedata = item
+                    SeriesData.push(d)
+                }
+                eval("data."+k+"=SeriesData")
             }
-            eval("data."+key+"=SeriesData")
         }
 
         return data;
@@ -224,7 +236,6 @@
             , async: false
             , success: function (result) {
                 var hits = result.hits;
-                console.log(77,hits)
                 for(var i=0;i<hits.length;i++){
                     var item = hits[i];
                     data.push({
@@ -247,7 +258,7 @@
 
         option = {
             title: {
-                text: 'Device['+_device_id+'] Temp Monitor'
+                text: 'Device['+_device_id+']'
             },
             tooltip: {
                 trigger: 'axis',
@@ -318,23 +329,23 @@
             }]
         };
 
-        setInterval(function () {
-            data.shift();
-
-            for(var i=0;i<lastDeviceDatas.length;i++){
-                var item = lastDeviceDatas[i]
-                if(item.sourcedata.devicegroup === _device_id){
-                    data.push(item);
-                    break;
-                }
-            }
-
-            myChart.setOption({
-                series: [{
-                    data: data
-                }]
-            });
-        }, 60000);
+        // setInterval(function () {
+        //     data.shift();
+        //
+        //     for(var i=0;i<lastDeviceDatas.length;i++){
+        //         var item = lastDeviceDatas[i]
+        //         if(item.sourcedata.devicegroup === _device_id){
+        //             data.push(item);
+        //             break;
+        //         }
+        //     }
+        //
+        //     myChart.setOption({
+        //         series: [{
+        //             data: data
+        //         }]
+        //     });
+        // }, 60000);
 
         if (option && typeof option === "object") {
             myChart.setOption(option, true);
@@ -344,15 +355,28 @@
     function drawMonitorDashborad() {
         $("#temp_monitors").empty();
         var html_div = "";
+
         for(var key in tempTimeAixData){
-            html_div += "<div class='div-monitors-style' id='device_"+key+"'></div>";
+            var item;
+            eval("item = tempTimeAixData."+key)
+            console.log(12,item)
+            html_div += "<div class='div-monitors-group-style' id='group_"+key+"'>";
+            for(var k1 in item){
+                if(k1==="group")
+                    continue;
+                html_div += "<div class='div-monitors-device-style' id='device_"+k1+"'></div>";
+            }
+            html_div += "</div>";
+            html_div += "<hr />"
         }
         $("#temp_monitors").html(html_div)
 
         refrshLastRec();
 
         var seriesDatas = initSeriesData(tempTimeAixData)
-        for(var key in tempTimeAixData){
+
+        console.log(13,seriesDatas)
+        for(var key in seriesDatas){
             var seriesData;
             eval("seriesData = seriesDatas."+key)
             initEchart(key,seriesData);

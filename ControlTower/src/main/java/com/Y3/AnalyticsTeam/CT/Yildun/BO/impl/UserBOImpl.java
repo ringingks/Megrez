@@ -1,6 +1,6 @@
-package com.Y3.AnalyticsTeam.CT.BO.impl;
+package com.Y3.AnalyticsTeam.CT.Yildun.BO.impl;
 
-import com.Y3.AnalyticsTeam.CT.BO.UserBO;
+import com.Y3.AnalyticsTeam.CT.Yildun.BO.UserBO;
 import com.Y3.AnalyticsTeam.CT.consumer.SystemService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

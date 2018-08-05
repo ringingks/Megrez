@@ -1,4 +1,4 @@
-package com.Y3.AnalyticsTeam.CT.Action;
+package com.Y3.AnalyticsTeam.CT.Yildun.Action;
 
 import com.Y3.AnalyticsTeam.CT.consumer.CommonService;
 import com.Y3.AnalyticsTeam.CT.consumer.ReportService;
